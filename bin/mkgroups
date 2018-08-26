@@ -1,0 +1,4 @@
+#!/bin/bash
+SRC=$(cd $(dirname "$0")/../src && pwd)
+"$SRC/mkgroups.py" "$@"
+
