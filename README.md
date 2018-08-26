@@ -51,8 +51,9 @@ Benefits
 Module Files
 ------------
 
-`mkgroups` takes as input one or more YAML files called _modules_ in the same
-directory, that together define groups and permissions for a single world.
+`mkgroups` takes as input one or more YAML files (with the suffix `.yml`) called
+_modules_ in the same directory, that together define groups and permissions
+for a single world.
 
 Modules can contain one or more top level maps with the name `groups`, `weights`
 and `permissions`. All other settings in the YAML are ignored.
@@ -69,15 +70,14 @@ groups:
   - default
   
   Admins:
-  - Moderators  
-
+  - Moderators
 ```
 
 The above configuration mentions three groups (`default`, `Admins` and `Moderators`);
 `Moderators` inherits from the `default` group and `Admins` inherits from `Moderators`.
 `mkgroups` enforces consistent usage of letter case for group names; it is an
 error to mention a group with different variations of letter case. (This may
-may not be enforced in the future, since it turns out LuckPerms converts all
+not be enforced in a future version, since it turns out LuckPerms converts all
 the group names to lower case anyway.)
 
 
