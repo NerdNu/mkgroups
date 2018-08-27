@@ -44,7 +44,7 @@ Benefits
    even include comments in your YAML, if you desire.
  
  * _Rebuild Easily_: `mkgroups` makes it trivial to clear out all permissions 
-   and rebuild them from scratch. Thus obsolete or mistakenly added permission
+   and rebuild them from scratch. Thus, obsolete or mistakenly added permission
    nodes can easily be expunged.
 
 
@@ -52,12 +52,15 @@ Module Files
 ------------
 
 `mkgroups` takes as input one or more YAML files (with the suffix `.yml`) called
-_modules_ in the same directory, that together define groups and permissions
+_modules_, in the same directory, that together define groups and permissions
 for a single world.
 
 Modules can contain one or more top level maps with the name `groups`, `weights`
 and `permissions`. `mkgroups` will show a warning message if there are other,
 unexpected keys in the YAML.
+
+There are no distinguished file names; any module file can contain any
+combination of `groups`, `weights` and `permissions` maps that you desire.
 
 
 ### Groups Map
@@ -101,7 +104,7 @@ hierarchy.
 
 ### Permissions Map
 
-The `weights` map has group names as its keys and arrays of case-insensitive,
+The `permissions` map has group names as its keys and arrays of case-insensitive,
 permissions node strings as its values. When `mkgroups` loads multiple modules,
 it concatenates and sorts the permission nodes for each group.
 
@@ -141,7 +144,7 @@ permissions:
   - bplugin.*
 ```
 
-`mkgroups` supports the bPermissions syntax for negated permission nodes - they
+`mkgroups` supports the bPermissions syntax for negated permission nodes: they
 begin with the caret (`^`), e.g. `^pluginname.permission`. It does _not_ do any
 special interpretation of wildcard permissions, e.g. `pluginname.*`.
 
