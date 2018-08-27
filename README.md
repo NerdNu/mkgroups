@@ -56,7 +56,8 @@ _modules_ in the same directory, that together define groups and permissions
 for a single world.
 
 Modules can contain one or more top level maps with the name `groups`, `weights`
-and `permissions`. All other settings in the YAML are ignored.
+and `permissions`. `mkgroups` will show a warning message if there are other,
+unexpected keys in the YAML.
 
 
 ### Groups Map
@@ -168,7 +169,7 @@ Command Line Arguments
 ```
 $ ./mkgroups --help
 usage: mkgroups.py [-h] -s SERVER [-m MODULES] [-w WORLD] [-p PLUGIN] [-d]
-                   [-a] [-u] [--debug]
+                   [-a] [-u] [-l] [--debug]
 
 Configure permissions for a specified server using mark2 send commands.
 
@@ -193,6 +194,8 @@ optional arguments:
                         if specified).
   -u, --update          Update permissions; without this flag, commands are
                         logged but permissions not changed.
+  -l, --list            List combined groups, weights and permissions to
+                        stdout.
   --debug               Enable debug logging.
 
 Examples:

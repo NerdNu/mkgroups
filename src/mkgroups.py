@@ -33,6 +33,14 @@ def error(*args, **kwargs):
 
 #------------------------------------------------------------------------------
 
+def warning(*args, **kwargs):
+    '''
+    Print a warning message beginning with WARNING: to stderr.
+    '''
+    eprint(*(['WARNING:'] + list(args)), **kwargs)
+
+#------------------------------------------------------------------------------
+
 class Server:
     '''
     Abstract base of classes that encapsulate the connection to a server 
@@ -73,7 +81,6 @@ class Server:
         else:
             error('unsupported permissions plugin: ' + plugin)
             sys.exit(1)
-        
 
     #--------------------------------------------------------------------------
 
@@ -195,12 +202,12 @@ class bPermissionsServer(Server):
     #--------------------------------------------------------------------------
     
     def deleteGroup(self, groupName, world = None):
-        eprint("WARNING: deleting groups is not supported by bPermissions commands; you must clear groups.yml yourself!")
+        warning("deleting groups is not supported by bPermissions commands; you must clear groups.yml yourself!")
         
     #--------------------------------------------------------------------------
 
     def groupClearPerms(self, groupName, world = None):
-        eprint("WARNING: clearing default group permissions is not implemented; review the resulting permissions!")
+        warning("clearing default group permissions is not implemented; review the resulting permissions!")
 
     #--------------------------------------------------------------------------
 
@@ -385,22 +392,18 @@ def loadModules(moduleDirectory):
     for fileName in modules:
         with open(fileName, 'r') as f:
             module = yaml.load(f)
-            if 'groups' in module:
-                groups = mergeDictsOfArrays(groups, module['groups'], True)
-            if 'weights' in module:
-                weights = mergeDicts(weights, module['weights'], mergeWeights)
-            if 'permissions' in module:
-                permissions = mergeDictsOfArrays(permissions, module['permissions'])
+            if module:
+                # Warn about unexpected keys - could be typos.
+                unexpectedKeys = set(module.keys()) - set(['groups', 'weights', 'permissions'])
+                if unexpectedKeys:
+                    warning('unexpected YAML keys in ' + fileName + ':', ' '.join(unexpectedKeys))
 
-    if DEBUG: 
-        print('Groups:')
-        print(yaml.dump(groups, default_flow_style=False))
-        print()
-        print('Permissions:')
-        print(yaml.dump(permissions, default_flow_style=False))
-        print()
-        print('Weights:')
-        print(yaml.dump(weights, default_flow_style=False))
+                if 'groups' in module:
+                    groups = mergeDictsOfArrays(groups, module['groups'], True)
+                if 'weights' in module:
+                    weights = mergeDicts(weights, module['weights'], mergeWeights)
+                if 'permissions' in module:
+                    permissions = mergeDictsOfArrays(permissions, module['permissions'])
 
     # Check that consistent case has been used for group names throughout.
     allGroups = set(groups.keys()) | set(permissions.keys()) | set(weights.keys())
@@ -487,6 +490,31 @@ def deletePermissions(server, context, world):
             server.groupClearPerms(group, world)
         else:
             server.deleteGroup(group, world)
+
+#------------------------------------------------------------------------------
+
+def listPermissions(context):
+    '''
+    List the combined groups, weights and permissions in the context.
+    '''
+    groups = context['groups']
+    weights = context['weights']
+    permissions = context['permissions']
+    if groups:
+        print('Groups')
+        print('~~~~~~')
+        print(yaml.dump(groups, default_flow_style=False))
+        print()
+    if weights:
+        print('Weights')
+        print('~~~~~~~')
+        print(yaml.dump(weights, default_flow_style=False))
+        print()
+    if permissions:
+        print('Permissions')
+        print('~~~~~~~~~~~')
+        print(yaml.dump(permissions, default_flow_style=False))
+
 #------------------------------------------------------------------------------
 
 class readable_dir(argparse.Action):
@@ -533,6 +561,8 @@ Examples:
                         help='Add all permissions on the specified server (and world if specified).')
     parser.add_argument('-u', '--update', action='store_true',
                         help='Update permissions; without this flag, commands are logged but permissions not changed.')
+    parser.add_argument('-l', '--list', action='store_true',
+                        help='List combined groups, weights and permissions to stdout.')
     parser.add_argument('--debug', action='store_true',
                         help='Enable debug logging.')
     
@@ -554,6 +584,9 @@ Examples:
     server = Server.withPermissionsPlugin(args.plugin, args.server, args.update)
     context = loadModules(args.modules)
     
+    if args.list:
+        listPermissions(context)
+
     if args.delete:
         if args.world == 'all':
             for world in context.keys():
