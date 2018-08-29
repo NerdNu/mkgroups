@@ -296,24 +296,41 @@ def lowerArray(a):
 
 #------------------------------------------------------------------------------
 
-def mergeArrays(a, b, caseSensitive=False):
+def mergePermissions(a, b):
     '''
-    Merge two arrays into a single sorted array. 
-    
+    Merge two arrays of permission nodes by converting them to lower case,
+    computing the set union, and returning the result as a sorted list.
+
     Args:
-        a, b - Arrays.
-        caseSensitive - Whether array elements are compared case-sensitively.
+        a, b - Arrays. None is treated as the empty array.
     '''
-    aSet = Set(a if caseSensitive else lowerArray(a)) 
-    bSet = Set(b if caseSensitive else lowerArray(b))
+    aSet = Set(lowerArray(a or [])) 
+    bSet = Set(lowerArray(b or []))
     return sorted(list(aSet | bSet))
+
+#------------------------------------------------------------------------------
+
+def mergeGroups(a, b):
+    '''
+    Merge two arrays of parent groups, removing duplicates, but preserving
+    order and case.
+
+    Args:
+        a, b - Arrays of groups.
+    '''
+    result = list(a)
+    aSet = Set(a)
+    for group in b:
+        if not group in aSet:
+            result.append(group)
+    return result
 
 #------------------------------------------------------------------------------
 
 def mergeDicts(a, b, mergeValues):
     '''
     Merges two dictionaries, non-destructively, combining
-    values on duplicate keys as defined by the optional mergeDictsOfArrays
+    values on duplicate keys as defined by the optional mergeValues ternary
     function.
     
     Args:
@@ -328,20 +345,6 @@ def mergeDicts(a, b, mergeValues):
         else:
             result[k] = v
     return result
-
-#------------------------------------------------------------------------------
-
-def mergeDictsOfArrays(a, b, caseSensitive=False):
-    '''
-    Merge two dictionaries where each key maps to a sorted array of strings.
-    
-    Args:
-        a, b          - Dictionaries to be merged.
-        caseSensitive - If False, array elements are converted to lower case.
-                        Otherwise, their case is preserved.
-                        NOTE: Map key case is always preserved.
-    '''
-    return mergeDicts(a, b, lambda _, x, y: mergeArrays(x, y, caseSensitive))
 
 #------------------------------------------------------------------------------
 
@@ -391,6 +394,8 @@ def loadModules(moduleDirectory):
     permissions = {}
     for fileName in modules:
         with open(fileName, 'r') as f:
+            if DEBUG:
+                print('Loading', fileName)
             module = yaml.load(f)
             if module:
                 # Warn about unexpected keys - could be typos.
@@ -399,11 +404,11 @@ def loadModules(moduleDirectory):
                     warning('unexpected YAML keys in ' + fileName + ':', ' '.join(unexpectedKeys))
 
                 if 'groups' in module:
-                    groups = mergeDictsOfArrays(groups, module['groups'], True)
+                    groups = mergeDicts(groups, module['groups'], lambda _, x, y: mergeGroups(x, y))
                 if 'weights' in module:
                     weights = mergeDicts(weights, module['weights'], mergeWeights)
                 if 'permissions' in module:
-                    permissions = mergeDictsOfArrays(permissions, module['permissions'])
+                    permissions = mergeDicts(permissions, module['permissions'], lambda _, x, y: mergePermissions(x, y))
 
     # Check that consistent case has been used for group names throughout.
     allGroups = set(groups.keys()) | set(permissions.keys()) | set(weights.keys())
