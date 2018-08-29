@@ -1,0 +1,10 @@
+permissions:
+  ForeignServerAdmins:
+  - libsdisguises.disguise.*.*
+  - libsdisguises.seecmd.viewself
+  - libsdisguises.undisguise
+
+  super:
+  - libsdisguises.disguise.*.*
+  - libsdisguises.seecmd.viewself
+  - libsdisguises.undisguise

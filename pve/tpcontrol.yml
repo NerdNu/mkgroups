@@ -1,0 +1,18 @@
+permissions:
+  ModMode:
+  - tpcontrol.back
+  - tpcontrol.level.mod
+  - tpcontrol.tppos
+  - tpcontrol.warp.*
+  
+  super:
+  - tpcontrol.delwarp
+  - tpcontrol.level.admin
+  - tpcontrol.setwarp
+
+  HeadAdmins:
+  - tpcontrol.level.fakoo
+  
+  TechAdmins:
+  - tpcontrol.level.fakoo
+  

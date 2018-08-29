@@ -1,0 +1,18 @@
+permissions:
+  default:
+  # TODO: necessary?
+  - ^logblock.spawntools
+
+  Moderators:
+  - logblock.lookup
+
+  ModMode:
+  - logblock.rollback
+  - logblock.tools.tool
+  - logblock.tools.toolblock
+  - logblock.tp
+
+  super:
+  # TODO: necessary?
+  - logblock.spawntools
+  - ^logblock.hide

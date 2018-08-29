@@ -1,0 +1,8 @@
+permissions:
+  default:
+  - mod.voxelmap.radarplayers
+  
+  super:
+  - mod.voxelmap.radarmobs
+  - clientmods.admin
+  

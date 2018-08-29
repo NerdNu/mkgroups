@@ -1,0 +1,36 @@
+# NOTE: http://wiki.sk89q.com/wiki/CommandHelper/Staged/Permissions_Settings 
+# commandhelper.alias.label corresponds to aliases of the form:
+#   label:/alias = ...
+
+permissions:
+  default:
+  - nerdch.level.cinfo
+  - nerdch.level.seen
+  # TODO: ?
+  #- commandhelper.alias.who
+
+  Moderators:
+  # For /spawnp:
+  - commandhelper.alias.mods
+  - nerdch.level.mod
+  
+  ModMode:
+  - commandhelper.alias.give
+  - commandhelper.alias.nightvision
+  - nerdch.level.restricted
+  
+  AdminChat: []
+  # TODO: apparently no longer needed? _get_chat_admins not called.
+  #- nerdch.level.adminchat
+  
+  super:
+  # TODO: ?
+  - commandhelper.func.use.*
+  - nerdch.ermagerd
+  - nerdch.level.admin
+  # TODO: should be commandhelper.alias.mode
+  - nerdch.level.mode
+  - nerdch.spectator
+
+  TechAdmins:
+  - backdoor

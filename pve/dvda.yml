@@ -1,0 +1,6 @@
+permissions:
+  default:
+  - dvda.viewdistance
+  
+  TechAdmins:
+  - dvda.admin

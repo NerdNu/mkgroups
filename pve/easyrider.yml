@@ -1,0 +1,19 @@
+permissions:
+  default:
+  - easyrider.gps-player
+  - easyrider.list-player
+
+  ModMode:
+  - easyrider.tp
+  - easyrider.tphere
+
+  super:
+  - easyrider.bypass
+  - easyrider.free-player
+  - easyrider.setlevel
+  - easyrider.swap
+  - easyrider.tame
+    
+  TechAdmins:
+  - easyrider.admin
+  

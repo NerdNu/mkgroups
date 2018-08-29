@@ -1,0 +1,11 @@
+permissions:
+  default:
+  - moblimiter.check
+  - moblimiter.limits
+
+  super:
+  # TODO: check if * includes cull and limits. 
+  - moblimiter.*
+  - moblimiter.cull
+  - moblimiter.limits
+  

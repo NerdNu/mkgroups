@@ -1,0 +1,10 @@
+permissions:
+  default:
+  - itemlocker.user
+  
+  ModMode:
+  - itemlocker.bypass
+  
+  TechAdmins:
+  - itemlocker.console
+  

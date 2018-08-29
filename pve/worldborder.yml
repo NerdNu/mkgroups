@@ -1,0 +1,15 @@
+permissions:
+  super:
+  - worldborder.bypass
+  - worldborder.bypasslist
+  - worldborder.clear
+  - worldborder.help
+  - worldborder.knockback
+  - worldborder.list
+  - worldborder.radius
+  - worldborder.set
+  - worldborder.shape
+  - worldborder.trim
+
+  TechAdmins:
+  - worldborder.fill

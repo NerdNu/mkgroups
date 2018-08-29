@@ -1,0 +1,19 @@
+permissions:
+  default:
+  # TODO: review
+  - ^shopkeeper.hire
+  - ^shopkeeper.player
+  - ^shopkeeper.player.book
+  - ^shopkeeper.player.buy
+  - ^shopkeeper.player.normal
+  - ^shopkeeper.player.trade
+  - ^shopkeeper.sign
+  - ^shopkeeper.villager
+  - ^shopkeeper.witch
+
+  super:
+  - shopkeeper.admin
+  - shopkeeper.bypass
+  - shopkeeper.reload
+  - shopkeeper.setforhire
+  - shopkeeper.transfer

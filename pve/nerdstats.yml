@@ -1,0 +1,6 @@
+permissions:
+  super:
+  - nerdstats.lag
+
+  TechAdmins:
+  - nerdstats.admin

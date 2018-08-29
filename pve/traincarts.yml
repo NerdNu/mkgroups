@@ -1,0 +1,6 @@
+permissions:
+  default:
+  - train.break.any
+  - train.place.minecart
+  - train.place.traincart
+  - train.property.default

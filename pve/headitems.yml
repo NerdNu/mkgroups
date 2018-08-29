@@ -1,0 +1,6 @@
+permissions:
+  # TODO: used for spawn build? Can we create a new group, e.g. MapPrep?
+  ModMode:
+  - headitems.item
+  - headitems.item.*
+  - headitems.list

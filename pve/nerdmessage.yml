@@ -1,0 +1,28 @@
+permissions:
+  default:
+  - nerdmessage.motd
+  - ^nerdmessage.ignore.bypass-msg
+  
+  AdminChat:
+  - nerdmessage.ab
+  - nerdmessage.abg
+  
+  Moderators:
+  - nerdmessage.broadcast
+  - nerdmessage.cmsg
+  - nerdmessage.globalbroadcast
+  - nerdmessage.ignore.alert
+  - nerdmessage.ignore.bypass-msg
+  - nerdmessage.mb
+  - nerdmessage.o
+
+  super:
+  - nerdmessage.abmotd
+  - nerdmessage.alert.admin
+  - nerdmessage.globalbroadcast
+  - nerdmessage.mbmotd
+  - nerdmessage.motd
+  - nerdmessage.setabmotd
+  - nerdmessage.setmbmotd
+  - nerdmessage.setmotd
+  

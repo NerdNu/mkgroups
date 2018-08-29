@@ -1,0 +1,7 @@
+permissions:
+  ModMode:
+  - epicranks.vanished
+  
+  super:
+  - epicranks.promote
+  - ^epicranks.vanished

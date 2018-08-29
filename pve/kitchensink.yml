@@ -1,0 +1,8 @@
+permissions:
+  super:
+  - kitchensink.admin
+  - kitchensink.countdown
+  - kitchensink.ksinventory
+  - kitchensink.lag
+  - kitchensink.mobcount
+  - kitchensink.petadmin

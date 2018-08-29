@@ -1,0 +1,17 @@
+# TODO: review all these permissions.
+permissions:
+  Moderators:
+  - modmode.toggle
+
+  ModMode:
+  - modmode.showmods
+  - modmode.unvanish
+  - modmode.unvanish.unlimited
+  - modmode.vanish
+  - modmode.vanish.list
+  - modmode.vanish.showmods
+
+  super:
+  - modmode.admin
+  - modmode.fullvanish
+  - modmode.showvanished

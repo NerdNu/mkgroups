@@ -1,0 +1,5 @@
+permissions:
+  super:
+  - otherdrops.admin.drop
+  - otherdrops.admin.id
+  - otherdrops.admin.show

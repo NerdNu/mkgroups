@@ -1,0 +1,28 @@
+permissions:
+  default:
+  - bukkit.command.help
+  # TODO: Are these negated nodes really necessary?
+  - ^bukkit.command.kill
+  - ^bukkit.command.me
+  - ^minecraft.command.me
+  
+  super:
+  - bukkit.command.gamemode
+  - bukkit.command.summon
+  - bukkit.command.tps
+  - bukkit.command.whitelist.add
+  - bukkit.command.whitelist.disable
+  - bukkit.command.whitelist.enable
+  - bukkit.command.whitelist.list
+  - bukkit.command.whitelist.remove
+  - minecraft.command.gamemode
+  - minecraft.command.kill
+  - minecraft.command.setblock
+  - minecraft.command.summon
+  - minecraft.command.weather
+  - minecraft.command.whitelist
+  - minecraft.command.worldborder
+
+  TechAdmins:
+  - bukkit.command.timings
+  

@@ -1,0 +1,39 @@
+groups:
+  Moderators:
+  - default
+
+  ModMode:
+  - Moderators
+
+  ForeignServerAdmins:
+  - Moderators
+  - AdminChat
+  
+  super:
+  - ModMode
+  - AdminChat
+  
+  CAdmins:
+  - ForeignServerAdmins
+  
+  PAdmins:
+  - super
+  
+  TechAdmins:
+  - super
+
+  HeadAdmins:
+  - super
+
+# Weights may not be necessary, since LuckPerms should be able to work out
+# precedence from inheritance.
+weights:
+  # Ensure that ModMode takes precendence over Moderators for negated perms.
+  Moderators: 1
+  ModMode: 2
+  AdminChat: 3
+  
+  CAdmins: 10
+  PAdmins: 10
+  HeadAdmins: 10
+  TechAdmins: 10

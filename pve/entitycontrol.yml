@@ -1,0 +1,6 @@
+permissions:
+  super:
+  - entitycontrol.user
+  
+  TechAdmins:
+  - entitycontrol.admin

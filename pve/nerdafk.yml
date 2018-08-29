@@ -1,0 +1,4 @@
+permissions:
+  default:
+  - nerdafk.afk
+  - nerdafk.noautoafk

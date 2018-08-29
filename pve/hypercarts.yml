@@ -1,0 +1,4 @@
+permissions:
+  default:
+  - hypercarts.user
+  

@@ -1,0 +1,6 @@
+permissions:
+  super:
+  - beastmaster.admin
+
+  TechAdmins:
+  - beastmaster.console

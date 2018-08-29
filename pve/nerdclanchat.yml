@@ -1,0 +1,6 @@
+permissions:
+  default:
+  - nerdclanchat.player
+
+  super:
+  - nerdclanchat.admin  

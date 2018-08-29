@@ -1,0 +1,14 @@
+permissions:
+  Moderators:
+  - modreq.mod
+  - ^modreq.teleport
+
+  ModMode:
+  # TODO: review.
+  - modreq.check
+  - modreq.claim
+  - modreq.done
+  - modreq.teleport
+
+  super:
+  - modreq.cleardb

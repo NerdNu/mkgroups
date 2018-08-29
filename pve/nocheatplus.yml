@@ -1,0 +1,21 @@
+permissions:
+  default:
+  # TODO: review.
+  - nocheatplus.mods.rei.radar.player
+  
+  Moderators:
+  # TODO: review.
+  - nocheatplus.admin.chatlog
+  - nocheatplus.checks.chat.color
+  - nocheatplus.checks.chat.commands
+  - nocheatplus.command.notify
+  - nocheatplus.notify
+  
+  ModMode:
+  # TODO: review.
+  - nocheatplus.checks.fight
+  - nocheatplus.checks.moving
+  - nocheatplus.checks.moving.runfly
+
+  super:
+  - nocheatplus.mods.rei.radar

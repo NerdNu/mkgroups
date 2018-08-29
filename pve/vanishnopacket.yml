@@ -1,0 +1,5 @@
+permissions:
+  ModMode:
+  - vanish.see
+  - vanish.vanish
+  

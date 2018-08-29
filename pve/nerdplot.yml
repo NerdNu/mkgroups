@@ -1,0 +1,23 @@
+permissions:
+  default:
+  # TODO: allow defaults to list own plots? Is that nerdplot.list?
+  - nerdplot.claim
+  - nerdplot.info
+  
+  ModMode:
+  - nerdplot.listany
+
+  super:
+  - nerdplot.clean
+  - nerdplot.create
+  - nerdplot.createarea
+  - nerdplot.list
+  - nerdplot.max
+  - nerdplot.reload
+  - nerdplot.remove
+  - nerdplot.removearea
+  - nerdplot.removeowner
+  - nerdplot.setmax
+  - nerdplot.setowner
+  - nerdplot.stats
+  - nerdplot.version

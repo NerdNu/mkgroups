@@ -1,0 +1,4 @@
+permissions:
+  super:
+  - mof.change
+  - mof.horse

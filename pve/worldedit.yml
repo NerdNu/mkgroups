@@ -1,0 +1,23 @@
+permissions:
+  ModMode:
+  - worldedit.drain
+  - worldedit.extinguish
+  - worldedit.fixlava
+  - worldedit.fixwater
+  - worldedit.history.redo
+  - worldedit.history.undo
+  - worldedit.navigation.ascend
+  - worldedit.navigation.descend
+  - worldedit.navigation.jumpto.command
+  - worldedit.navigation.jumpto.tool
+  - worldedit.navigation.thru.command
+  - worldedit.navigation.thru.tool
+  - worldedit.navigation.unstuck
+  - worldedit.navigation.up
+  - worldedit.remove
+  - worldedit.removenear
+  - worldedit.selection.*
+
+  super:
+  - worldedit.*
+  - worldedit.brush.*

@@ -1,0 +1,4 @@
+permissions:
+  TechAdmins:
+  - fixleaves.admin
+  - fixleaves.notify

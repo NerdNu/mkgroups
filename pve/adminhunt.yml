@@ -1,0 +1,9 @@
+permissions:
+  default:
+  - adminhunt.toggle.list
+
+  ForeignServerAdmins:
+  - adminhunt.toggle
+  
+  super:
+  - adminhunt.toggle

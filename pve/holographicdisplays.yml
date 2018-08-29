@@ -1,0 +1,19 @@
+permissions:
+  super:
+  - holograms.addline
+  - holograms.align
+  - holograms.copy
+  - holograms.create
+  - holograms.delete
+  - holograms.edit
+  - holograms.help
+  - holograms.info
+  - holograms.insertline
+  - holograms.list
+  - holograms.movehere
+  - holograms.near
+  - holograms.readimage
+  - holograms.readtext
+  - holograms.removeline
+  - holograms.setline
+  - holograms.teleport

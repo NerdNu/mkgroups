@@ -1,0 +1,12 @@
+permissions:
+  super:
+  - openinv.anychest
+  - openinv.crossworld
+  - openinv.editender
+  - openinv.editinv
+  - openinv.openender
+  - openinv.openenderall
+  - openinv.openinv
+  - openinv.openself
+  - openinv.search
+  - openinv.silent

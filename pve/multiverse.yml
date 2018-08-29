@@ -1,0 +1,19 @@
+permissions:
+  default:
+  - multiverse.portal.access.*
+
+  super:
+  - multiverse.access.*
+  - multiverse.core.confirm
+  - multiverse.core.gamerule.set
+  - multiverse.core.info
+  - multiverse.core.list.who
+  - multiverse.core.list.worlds
+  - multiverse.core.modify
+  - multiverse.core.modify.set
+  - multiverse.core.spawn.other
+  - multiverse.core.spawn.self
+  - multiverse.core.spawn.set
+  - multiverse.portal.*
+  - multiverse.teleport.*
+  - mv.bypass.gamemode.*

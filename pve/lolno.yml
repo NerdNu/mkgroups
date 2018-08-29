@@ -1,0 +1,6 @@
+permissions:
+  ModMode:
+  - lolno.mod
+
+  super:
+  - lolno.admin

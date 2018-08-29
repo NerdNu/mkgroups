@@ -1,0 +1,8 @@
+permissions:
+  ModMode:
+  - nerdspawn.spawn
+    
+  super:
+  - nerdspawn.setfirstspawn
+  - nerdspawn.setspawn
+  
