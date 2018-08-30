@@ -96,7 +96,7 @@ class Server:
                     interposed between consecutive arguments. 
         '''
         command = 'mark2 send '
-        if self.name != '':
+        if self.name:
             command += '-n ' + self.name + ' '
         command += ' '.join(args)
     
@@ -549,7 +549,6 @@ def allAncestors(group, groups):
                  this list to contain redundant ancestors. The function will
                  compensate for that.
     '''
-    # Map from parent to ancestors.
     result = []
     depthFirstPostOrderTraversal(group, groups, set(), lambda node: result.append(node))
     result.reverse()
@@ -570,7 +569,7 @@ def writeModuleFiles(context, outputDirectory):
         outputDirectory - The directory where module files will be written.
     '''
     # Map from permission stem (prefix before '.') to OrderedDict from group
-    # name to set (not list) of permissions.
+    # name to sorted list of permissions.
     modules = {}
 
     groups = context['groups']
@@ -758,17 +757,23 @@ if __name__ == '__main__':
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog='''
 Examples:
-    {0} --server pve-dev --world all --plugin bPermissions --delete --add
-        Delete, then add permissions to bPermissions in all worlds on pve-dev.
-        Commands to perform the actions are output but not sent to the server.                                         
-                                     
+    {0} --world all --modules pve --plugin bPermissions --delete --add
+        Generate bPermissions commands to delete and add all groups and their
+        permissions, in all worlds, according to the YAML modules in the
+        directory./pveall worlds specified in the directory pve/. The commands
+        are NOT sent to a server.
+
     {0} --server pve23 -au --modules ~/permissions/pve
         Add permissions for the default world of server pve23, using YAML
         module files from the specified directory as input.
         Commands for the default plugin (LuckPerms) are output to console 
         and sent to the server.
+
+    {0} -b /ssd/creative/plugins/bPermissions/groups.yml -o creative/
+        Load a bPermissions groups.yml file and write out the corresponding
+        module files.
                                      '''.format(sys.argv[0]))
-    parser.add_argument('-s', '--server', required=True, 
+    parser.add_argument('-s', '--server',
                         help='The name of the server in the mark2 tabs.')
     parser.add_argument('-m', '--modules', action=readable_dir, 
                         help='''The path to the directory containing YAML
@@ -815,6 +820,11 @@ Examples:
         print('# bPermissions:', args.bperms_groups.name if args.bperms_groups else None)
         print('# world:', (args.world or '<default world>'))
         print()
+
+    # Require a server name if commands will actually be sent.
+    if args.update and args.server is None:
+        error('you must specify the server name to send commands (-u/--update)')
+        sys.exit(1)
 
     server = Server.withPermissionsPlugin(args.plugin, args.server, args.update)
 
