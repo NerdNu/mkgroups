@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 from collections import defaultdict
+from collections import OrderedDict
 from sets import Set
 
 import argparse
@@ -10,6 +11,7 @@ import glob
 import os.path
 import sys
 import yaml
+from platform import node
 
 #------------------------------------------------------------------------------
 
@@ -361,13 +363,56 @@ def mergeWeights(group, a, b):
 
 #------------------------------------------------------------------------------
 
+def makeContext(groups, weights, permissions):
+    '''
+    Make a context dict as defined in loadModules(). Specifically:
+    ensure that all groups mentioned in all input arguments use consistent
+    letter case across all mentions, and have a key in the groups dict of the
+    return context. Also, ensure that all groups have an entry in the
+    permissions map.
+
+    Args:
+        groups      - A dict mapping group name to list of case-sensitive parent
+                      group names.
+        weights     - The weight of each group where that is specified; key
+                      missing to signify unspecified.
+        permissions - Map from group name to sorted list of lower-cased
+                      permissions.
+    '''
+    # Check that consistent case has been used for group names throughout.
+    allGroups = set(groups.keys()) | set(permissions.keys()) | set(weights.keys())
+    for parents in groups.values():
+        allGroups |= set(parents)
+    groupMentions = defaultdict(list)
+    for group in allGroups:
+        groupMentions[group.lower()].append(group)
+
+    groupNameError = False
+    for group, mentions in groupMentions.iteritems():
+        if len(mentions) > 1:
+            error('group', group, 'is mentioned variously as:', ' '.join(mentions))
+            groupNameError = True
+
+    if groupNameError:
+        eprint('Ensure that group names always use consistent letter case.')
+        sys.exit(1)
+
+    # Ensure that all groups have an entry in the groups and permissions maps.
+    for group in allGroups:
+        groups.setdefault(group, [])
+        permissions.setdefault(group, [])
+
+    return {'groups': groups, 'weights': weights, 'permissions': permissions}
+
+#------------------------------------------------------------------------------
+
 def loadModules(moduleDirectory):
     '''
     Load *.yml in the specified directory and return a dict describing the 
     permissions ascribed to the corresponding context (world).
     
     Args:
-        moduleDirectory - the directory containing YAML permission modules.
+        moduleDirectory - The directory containing YAML permission modules.
     
     Returns:
         A dict describing a permission context with the following keys:
@@ -410,35 +455,176 @@ def loadModules(moduleDirectory):
                 if 'permissions' in module:
                     permissions = mergeDicts(permissions, module['permissions'], lambda _, x, y: mergePermissions(x, y))
 
-    # Check that consistent case has been used for group names throughout.
-    allGroups = set(groups.keys()) | set(permissions.keys()) | set(weights.keys())
-    for parents in groups.values():
-        allGroups |= set(parents)
-    groupMentions = defaultdict(list)
-    for group in allGroups:
-        groupMentions[group.lower()].append(group)
+    return makeContext(groups, weights, permissions)
+
+#------------------------------------------------------------------------------
+
+def loadBPermissions(groupsFile):
+    '''
+    Load a bPermissions groups file and return it as a context dict, as per
+    loadModules().
     
-    groupNameError = False
-    for group, mentions in groupMentions.iteritems():
-        if len(mentions) > 1:
-            error('group', group, 'is mentioned variously as:', ' '.join(mentions))
-            groupNameError = True
+    Args:
+        groupsFile - The open file containing bPermissions groups.
         
-    if groupNameError:
-        eprint('Ensure that group names always use consistent letter case.')
-        sys.exit(1)
+    Returns:
+        A context dict.
+    '''
+    groups = {}
+    permissions = {}
 
-    # Ensure that all groups have an entry in the groups map.
-    for group in allGroups:
-        if not group in groups:
-            groups[group] = []                    
+    bPermissions = yaml.load(groupsFile)
+    if bPermissions and 'groups' in bPermissions:
+        bPermsGroups = bPermissions['groups']
+        for name, group in bPermsGroups.iteritems():
+            permissions[name] = sorted(lowerArray(group.get('permissions', [])))
+            groups[name] = group.get('groups', [])
 
-    context = dict()
-    context['groups'] = groups
-    context['weights'] = weights
-    context['permissions'] = permissions
-    return context
+    return makeContext(groups, {}, permissions)
+
+#------------------------------------------------------------------------------
+
+def depthFirstPostOrderTraversal(node, edges, seenNodes, visit):
+    '''
+    Given a DAG, do a depth-first, postorder traversal of the subgraph
+    rooted at the specified node, calling a specified visit() function as each
+    node is visited.
+
+    Args:
+        node      - The root of the subtree to traverse.
+        edges     - Directed edges, expressed as a map from the source node to
+                    a list of the corresponding edge destination nodes.
+        seenNodes - The set of nodes that have been visited so far. Should be
+                    initialised to set() (the empty set).
+        visit     - A unary function that takes a node and performs some
+                    processing when it is visited.
+    '''
+    for dependency in edges[node]:
+        if not dependency in seenNodes:
+            seenNodes.add(dependency)
+            depthFirstPostOrderTraversal(dependency, edges, seenNodes, visit)
+            visit(dependency)
+
+    if not node in seenNodes:
+        visit(node)
+        seenNodes.add(node)
+
+#------------------------------------------------------------------------------
+
+def naturallyOrderedGroups(groups):
+    '''
+    Given a dict mapping group name to list of parent groups, return a list of
+    the groups, ordered from most general to most specific, according to the
+    group inheritance relation.
+
+    Where two groups are equally specific, their relative ordering is determined
+    lexicographically, case-insensitively.
+
+    Args:
+        groups - A map from group name to list of parent groups. This map has a
+                 key for all groups, whether they have parents or not.
+
+    Returns:
+        A list of all groups, ordered from furthest ancestor to deepest
+        descendant.
+    '''
+    result = []
+    visitedGroups = set()
+
+    # Enforce preferred lexicographic ordering by pre-sorting groups.
+    for group in sorted(groups.keys(), key=lambda v: v.upper()):
+        depthFirstPostOrderTraversal(group, groups, visitedGroups, lambda node: result.append(node))
+    return result
+
+#------------------------------------------------------------------------------
+
+def allAncestors(group, groups):
+    '''
+    Return all ancestors of a group, listed from immediate ancestor to furthest
+    ancestor.
+
+    Args:
+        group  - The group whose ancestors are returned.
+        groups - Map from group name to list of ancestors. It's possible for
+                 this list to contain redundant ancestors. The function will
+                 compensate for that.
+    '''
+    # Map from parent to ancestors.
+    result = []
+    depthFirstPostOrderTraversal(group, groups, set(), lambda node: result.append(node))
+    result.reverse()
+    # Skip the first node, which is always group itself.
+    return result[1:]
+
+#------------------------------------------------------------------------------
+
+def writeModuleFiles(context, outputDirectory):
+    '''
+    Write YAML module files representing the specified context to the specified
+    directory.
+
+    Args:
+        context         - A dict containing 'groups', 'weights' and 'permissions'
+                          keys describing the permissions in specific world, or
+                          the default world/permission context.
+        outputDirectory - The directory where module files will be written.
+    '''
+    # Map from permission stem (prefix before '.') to OrderedDict from group
+    # name to set (not list) of permissions.
+    modules = {}
+
+    groups = context['groups']
+    weights = context['weights']
+    permissions = context['permissions']
+    orderedGroups = naturallyOrderedGroups(groups)
+
+    # Write a module representing groups and weights.
+    groupsModuleGroups = UnsortableOrderedDict()
+    groupsModuleWeights = UnsortableOrderedDict()
+    for groupName in orderedGroups:
+        groupsModuleGroups.setdefault(groupName, []).extend(groups[groupName])
+        if groupName in weights.keys():
+            groupsModuleWeights[groupName] = weights[groupName]
+
+    groupsModule = UnsortableOrderedDict()
+    groupsModule['groups'] = groupsModuleGroups
+    groupsModule['weights'] = groupsModuleWeights
+    with open(outputDirectory + '/GROUPS.yml', 'w') as f:
+        yaml.dump(groupsModule, f, default_flow_style=False)
     
+    # Group all permissions into modules based on the permission stem.
+    for groupName in orderedGroups:
+        for perm in permissions[groupName]:
+            prefix, _, _ = perm.partition('.')
+            if prefix.startswith('^'):
+                stem = prefix[1:]
+                inversePerm = perm[1:]
+            else:
+                stem = prefix
+                inversePerm = '^' + perm
+
+            module = modules.setdefault(stem, UnsortableOrderedDict())
+
+            # Check if an ancestor group contains a permission before adding.
+            inheritedPerm = False
+            for ancestor in allAncestors(groupName, groups):
+                # If an ancestor contains the inverse perm, then the module MUST
+                # override that.
+                if inversePerm in permissions[ancestor]:
+                    break
+                if perm in permissions[ancestor]:
+                    inheritedPerm = True
+                    print('NOTE: removing redundant permission', perm, 'from', groupName, 'because it is inherited from', ancestor)
+                    break
+            if not inheritedPerm:
+                module.setdefault(groupName, []).append(perm)
+
+    # Write all module files.
+    for moduleName, modulePermissions in modules.iteritems():
+        with open(outputDirectory + '/' + moduleName + '.yml', 'w') as f:
+            module = {'permissions': modulePermissions}
+            yaml.dump(module, f, default_flow_style=False)
+
 #------------------------------------------------------------------------------
 
 def updatePermissions(server, context, world):
@@ -524,20 +710,50 @@ def listPermissions(context):
 
 class readable_dir(argparse.Action):
     '''
-    Extend argparse to support directory arguments, courtesy of StackOverflow.
+    Extend argparse to check for readable directory arguments, courtesy of
+    StackOverflow.
     '''
     def __call__(self, parser, namespace, values, option_string=None):
         prospective_dir=values
         if not os.path.isdir(prospective_dir):
-            raise argparse.ArgumentError(self, "readable_dir:{0} is not a valid path".format(prospective_dir))
+            raise argparse.ArgumentError(self, "readable_dir: {0} does not exist".format(prospective_dir))
         if os.access(prospective_dir, os.R_OK):
             setattr(namespace, self.dest, prospective_dir)
         else:
-            raise argparse.ArgumentError(self, "readable_dir:{0} is not a readable dir".format(prospective_dir))
+            raise argparse.ArgumentError(self, "readable_dir: {0} is not a readable dir".format(prospective_dir))
+
+#------------------------------------------------------------------------------
+
+class writable_dir(argparse.Action):
+    '''
+    Extend argparse to check for writable directory arguments, courtesy of
+    StackOverflow.
+    '''
+    def __call__(self, parser, namespace, values, option_string=None):
+        prospective_dir=values
+        if not os.path.isdir(prospective_dir):
+            raise argparse.ArgumentError(self, "writable_dir: {0} does not exist".format(prospective_dir))
+        if os.access(prospective_dir, os.W_OK):
+            setattr(namespace, self.dest, prospective_dir)
+        else:
+            raise argparse.ArgumentError(self, "writable_dir: {0} is not a writable dir".format(prospective_dir))
+
+#------------------------------------------------------------------------------
+# Set up PyYAML to write YAML keys in the order we add them.
+
+class UnsortableList(list):
+    def sort(self, *args, **kwargs):
+        pass
+
+class UnsortableOrderedDict(OrderedDict):
+    def items(self, *args, **kwargs):
+        return UnsortableList(OrderedDict.items(self, *args, **kwargs))
 
 #------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+    yaml.add_representer(UnsortableOrderedDict, yaml.representer.SafeRepresenter.represent_dict)
+
     parser = argparse.ArgumentParser(description='Configure permissions for a specified server using mark2 send commands.',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog='''
@@ -546,7 +762,7 @@ Examples:
         Delete, then add permissions to bPermissions in all worlds on pve-dev.
         Commands to perform the actions are output but not sent to the server.                                         
                                      
-    {0} --server pve23 --add --update --modules ~/permissions/pve
+    {0} --server pve23 -au --modules ~/permissions/pve
         Add permissions for the default world of server pve23, using YAML
         module files from the specified directory as input.
         Commands for the default plugin (LuckPerms) are output to console 
@@ -555,42 +771,68 @@ Examples:
     parser.add_argument('-s', '--server', required=True, 
                         help='The name of the server in the mark2 tabs.')
     parser.add_argument('-m', '--modules', action=readable_dir, 
-                        help='The path to the directory containing YAML permission modules. If unspecified, a subdirectory of the CWD named after the server is tried.')
+                        help='''The path to the directory containing YAML
+                                permission modules. If unspecified, a subdirectory
+                                of the CWD named after the server is tried.''')
     parser.add_argument('-w', '--world', 
-                        help='The name of a specific world to configure; treated as the name of a subdirectory of the modules directory. Leave unset/empty string for the default worlds. Use "all" to signify all worlds.')
+                        help='''The name of a specific world to configure; treated
+                                as the name of a subdirectory of the modules directory.
+                                Leave unset/empty string for the default worlds.
+                                Use "all" to signify all worlds.''')
+    parser.add_argument('-b', '--bperms-groups', type=argparse.FileType('r'),
+                        help='''The path of a bPermissions groups.yml file to
+                                read instead of module files. Overrides --modules.''')
+    parser.add_argument('-o', '--output-modules', action=writable_dir,
+                        help='''The path to a directory where YAML module files
+                                will be output. The directory must exist. A
+                                module file will be generated for each permission
+                                "stem": that part of the permission name that
+                                precedes the first period, e.g. "bukkit" for
+                                "bukkit.command.help".''')
     parser.add_argument('-p', '--plugin', default='LuckPerms',
                         help='The name of the permissions plugin.')
     parser.add_argument('-d', '--delete', action='store_true',
-                        help='Delete all permissions on the specified server (and world if specified).')
+                        help='''Delete all permissions on the specified server
+                                (and world if specified).''')
     parser.add_argument('-a', '--add', action='store_true',
-                        help='Add all permissions on the specified server (and world if specified).')
+                        help='''Add all permissions on the specified server
+                        (and world if specified).''')
     parser.add_argument('-u', '--update', action='store_true',
-                        help='Update permissions; without this flag, commands are logged but permissions not changed.')
+                        help='''Update permissions; without this flag, commands
+                                are logged but permissions not changed.''')
     parser.add_argument('-l', '--list', action='store_true',
                         help='List combined groups, weights and permissions to stdout.')
     parser.add_argument('--debug', action='store_true',
                         help='Enable debug logging.')
-    
+
     args = parser.parse_args()
-    if not args.modules:
-        args.modules = args.server
-        if not os.path.isdir(args.modules):
-            error('the default modules path cannot be read:', args.modules)
-            sys.exit(1)
-    
     DEBUG = args.debug
     if DEBUG:
         print('# server:', args.server)
         print('# plugin:', args.plugin)
         print('# modules:', args.modules)
+        print('# output_modules:', args.output_modules)
+        print('# bPermissions:', args.bperms_groups.name if args.bperms_groups else None)
         print('# world:', (args.world or '<default world>'))
         print()
-    
+
     server = Server.withPermissionsPlugin(args.plugin, args.server, args.update)
-    context = loadModules(args.modules)
-    
+
+    if args.bperms_groups:
+        context = loadBPermissions(args.bperms_groups)
+    else:
+        if not args.modules:
+            args.modules = args.server
+            if not os.path.isdir(args.modules):
+                error('the default modules path cannot be read:', args.modules)
+                sys.exit(1)
+        context = loadModules(args.modules)
+
     if args.list:
         listPermissions(context)
+
+    if args.output_modules:
+        writeModuleFiles(context, args.output_modules)
 
     if args.delete:
         if args.world == 'all':
