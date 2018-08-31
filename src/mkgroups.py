@@ -821,6 +821,11 @@ Examples:
         print('# world:', (args.world or '<default world>'))
         print()
 
+    # If no args are given, treat as --help.
+    if len(sys.argv) == 1:
+        parser.print_usage()
+        sys.exit(0)
+
     # Require a server name if commands will actually be sent.
     if args.update and args.server is None:
         error('you must specify the server name to send commands (-u/--update)')
@@ -833,6 +838,9 @@ Examples:
     else:
         if not args.modules:
             args.modules = args.server
+            if not args.modules:
+                error('you need to specify a modules path or import from bPermissions')
+                sys.exit(1)
             if not os.path.isdir(args.modules):
                 error('the default modules path cannot be read:', args.modules)
                 sys.exit(1)
