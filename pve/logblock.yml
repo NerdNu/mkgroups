@@ -13,6 +13,7 @@ permissions:
   - logblock.tp
 
   super:
+  - ^logblock.hide
   # TODO: necessary?
   - logblock.spawntools
-  - ^logblock.hide
+

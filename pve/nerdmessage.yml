@@ -1,7 +1,7 @@
 permissions:
   default:
-  - nerdmessage.motd
   - ^nerdmessage.ignore.bypass-msg
+  - nerdmessage.motd
   
   AdminChat:
   - nerdmessage.ab
@@ -19,10 +19,7 @@ permissions:
   super:
   - nerdmessage.abmotd
   - nerdmessage.alert.admin
-  - nerdmessage.globalbroadcast
   - nerdmessage.mbmotd
-  - nerdmessage.motd
   - nerdmessage.setabmotd
   - nerdmessage.setmbmotd
   - nerdmessage.setmotd
-  

@@ -7,5 +7,4 @@ permissions:
   # TODO: check if * includes cull and limits. 
   - moblimiter.*
   - moblimiter.cull
-  - moblimiter.limits
   

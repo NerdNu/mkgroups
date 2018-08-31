@@ -6,23 +6,24 @@ permissions:
   Moderators:
   - nerdlist.group.mods
   
-  ModMode:
-  - nerdlist.group.modmode
+  ForeignServerAdmins:
+  - nerdlist.admin
 
   CAdmins:
   - nerdlist.group.cadmins
 
-  PAdmins:
-  - nerdlist.group.padmins
-  
+  ModMode:
+  - nerdlist.group.modmode
+
   HeadAdmins:
   - nerdlist.group.headadmins
   
+  PAdmins:
+  - nerdlist.group.padmins
+
   TechAdmins:
   - nerdlist.group.techadmins
   
   super:
   - nerdlist.admin
 
-  ForeignServerAdmins:
-  - nerdlist.admin

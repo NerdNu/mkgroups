@@ -1,12 +1,12 @@
 permissions:
   default:
-  - dynmap.hide.self
-  - dynmap.show.self
   # TODO: review necessity of negated nodes.
   - ^dynmap.marker.icons
   - ^dynmap.marker.listsets
   - ^dynmap.render
   - ^dynmap.webchat
-  
+  - dynmap.hide.self
+  - dynmap.show.self
+
   super:
   - dynmap.*

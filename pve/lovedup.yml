@@ -4,6 +4,6 @@ permissions:
   - lovedup.exempt
   
   super:
-  - lovedup.loveall
   # Remove inherited permission; re-added in modmode.
   - ^lovedup.exempt
+  - lovedup.loveall

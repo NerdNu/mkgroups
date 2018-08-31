@@ -1,10 +1,10 @@
 permissions:
   default:
-  - bukkit.command.help
   # TODO: Are these negated nodes really necessary?
   - ^bukkit.command.kill
   - ^bukkit.command.me
   - ^minecraft.command.me
+  - bukkit.command.help
   
   super:
   - bukkit.command.gamemode

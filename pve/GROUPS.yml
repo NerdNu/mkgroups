@@ -2,27 +2,27 @@ groups:
   Moderators:
   - default
 
-  ModMode:
-  - Moderators
-
   ForeignServerAdmins:
   - Moderators
   - AdminChat
-  
+
+  CAdmins:
+  - ForeignServerAdmins
+
+  ModMode:
+  - Moderators
+
   super:
   - ModMode
   - AdminChat
   
-  CAdmins:
-  - ForeignServerAdmins
-  
+  HeadAdmins:
+  - super
+
   PAdmins:
   - super
   
   TechAdmins:
-  - super
-
-  HeadAdmins:
   - super
 
 # Weights may not be necessary, since LuckPerms should be able to work out

@@ -11,6 +11,7 @@ permissions:
   - nerdplot.clean
   - nerdplot.create
   - nerdplot.createarea
+  - nerdplot.infoany
   - nerdplot.list
   - nerdplot.max
   - nerdplot.reload
