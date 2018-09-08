@@ -1,4 +1,9 @@
 permissions:
   default:
   - hypercarts.user
+
+  TechAdmins:
+  - hypercarts.admin
+  # Can add this when debugging:
+  #- hypercarts.debug
   
