@@ -182,10 +182,10 @@ Command Line Arguments
 ----------------------
 
 ```
-$ bin/mkgroups --help
-sage: mkgroups.py [-h] [-s SERVER] [-i INPUT_MODULES] [-w WORLD]
-                   [-b BPERMS_GROUPS] [-o OUTPUT_MODULES] [-p PLUGIN] [-d]
-                   [-a] [-u] [-l] [--debug]
+usage: mkgroups.py [-h] [-s SERVER] [-i INPUT_MODULES] [-w WORLD]
+                   [-m MODULES [MODULES ...]] [-b BPERMS_GROUPS]
+                   [-o OUTPUT_MODULES] [-p PLUGIN] [-d] [-a] [-u] [-l]
+                   [--debug]
 
 Configure permissions for a specified server using mark2 send commands.
 
@@ -206,6 +206,19 @@ optional arguments:
                         the name of a subdirectory of the modules directory.
                         Leave unset/empty string for the default worlds. Use
                         "all" to signify all worlds.
+  -m MODULES [MODULES ...], --modules MODULES [MODULES ...]
+                        One or more module file names to load from the
+                        --input-modules directory. This option can be
+                        specified multiple times, and can be followed by
+                        multiple file names each time. The '.yml' extension
+                        can be omitted from file names. The purpose of this
+                        option is to allow permissions to be added to a module
+                        without having to load modules that have not changed.
+                        The result will be that only the commands to add
+                        permissions relating to the specified modules will be
+                        issued. CAUTION: There is no analogously minimal way
+                        to remove permissions. You need to remove all
+                        permissions and re-add them all from scratch.
   -b BPERMS_GROUPS, --bperms-groups BPERMS_GROUPS
                         The path of a bPermissions groups.yml file to read
                         instead of module files. Overrides --input-modules.

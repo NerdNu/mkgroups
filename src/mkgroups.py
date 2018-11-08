@@ -406,13 +406,17 @@ def makeContext(groups, weights, permissions):
 
 #------------------------------------------------------------------------------
 
-def loadModules(moduleDirectory):
+def loadModules(moduleDirectory, moduleNames):
     '''
     Load *.yml in the specified directory and return a dict describing the 
     permissions ascribed to the corresponding context (world).
     
     Args:
         moduleDirectory - The directory containing YAML permission modules.
+        moduleNames - A list of names of module files to load in that directory,
+                      possibly with file extensions omitted, and possibly the
+                      empty list. The empty list signifies that ALL modules
+                      in the directory should be loaded.
     
     Returns:
         A dict describing a permission context with the following keys:
@@ -433,27 +437,40 @@ def loadModules(moduleDirectory):
         error('no .yml files in ' + moduleDirectory)
         sys.exit(1)
 
+    # Pre-process moduleNames into full filenames.
+    if not moduleNames:
+        moduleFileNames = modules
+    else:
+        moduleFileNames = []
+        for name in moduleNames:
+            baseName = name if name.endswith('.yml') else name + '.yml'
+            moduleFileNames.append(moduleDirectory + '/' + baseName)
+
     # Merge all module files.        
     groups = {}
     weights = {}
     permissions = {}
-    for fileName in modules:
-        with open(fileName, 'r') as f:
-            if DEBUG:
-                print('Loading', fileName)
-            module = yaml.load(f)
-            if module:
-                # Warn about unexpected keys - could be typos.
-                unexpectedKeys = set(module.keys()) - set(['groups', 'weights', 'permissions'])
-                if unexpectedKeys:
-                    warning('unexpected YAML keys in ' + fileName + ':', ' '.join(unexpectedKeys))
+    for fileName in moduleFileNames:
+        try:
+            with open(fileName, 'r') as f:
+                if DEBUG:
+                    print('Loading', fileName)
+                module = yaml.load(f)
+                if module:
+                    # Warn about unexpected keys - could be typos.
+                    unexpectedKeys = set(module.keys()) - set(['groups', 'weights', 'permissions'])
+                    if unexpectedKeys:
+                        warning('unexpected YAML keys in ' + fileName + ':', ' '.join(unexpectedKeys))
 
-                if 'groups' in module:
-                    groups = mergeDicts(groups, module['groups'], lambda _, x, y: mergeGroups(x, y))
-                if 'weights' in module:
-                    weights = mergeDicts(weights, module['weights'], mergeWeights)
-                if 'permissions' in module:
-                    permissions = mergeDicts(permissions, module['permissions'], lambda _, x, y: mergePermissions(x, y))
+                    if 'groups' in module:
+                        groups = mergeDicts(groups, module['groups'], lambda _, x, y: mergeGroups(x, y))
+                    if 'weights' in module:
+                        weights = mergeDicts(weights, module['weights'], mergeWeights)
+                    if 'permissions' in module:
+                        permissions = mergeDicts(permissions, module['permissions'], lambda _, x, y: mergePermissions(x, y))
+        except IOError as e:
+            error('cannot open module file "' + fileName + '" to read.')
+            sys.exit(1)
 
     return makeContext(groups, weights, permissions)
 
@@ -789,6 +806,19 @@ Examples:
                                 as the name of a subdirectory of the modules directory.
                                 Leave unset/empty string for the default worlds.
                                 Use "all" to signify all worlds.''')
+    parser.add_argument('-m', '--modules', nargs='+', action='append',
+                        help='''One or more module file names to load from the
+                                --input-modules directory. This option can be
+                                specified multiple times, and can be followed by
+                                multiple file names each time. The '.yml' extension
+                                can be omitted from file names. The purpose of this
+                                option is to allow permissions to be added to a
+                                module without having to load modules that have
+                                not changed. The result will be that only the
+                                commands to add permissions relating to the specified
+                                modules will be issued. CAUTION: There is no analogously
+                                minimal way to remove permissions. You need to remove
+                                all permissions and re-add them all from scratch.''')
     parser.add_argument('-b', '--bperms-groups', type=argparse.FileType('r'),
                         help='''The path of a bPermissions groups.yml file to
                                 read instead of module files. Overrides --input-modules.
@@ -819,11 +849,17 @@ Examples:
 
     args = parser.parse_args()
     DEBUG = args.debug
+
+    # If --modules is specified, it will be a list of lists. Flatten.
+    if args.modules:
+        args.modules = [item for sublist in args.modules for item in sublist]
+
     if DEBUG:
         print('# server:', args.server)
         print('# plugin:', args.plugin)
         print('# input_modules:', args.input_modules)
         print('# output_modules:', args.output_modules)
+        print('# modules:', args.modules)
         print('# bPermissions:', args.bperms_groups.name if args.bperms_groups else None)
         print('# world:', (args.world or '<default world>'))
         print()
@@ -851,7 +887,7 @@ Examples:
             if not os.path.isdir(args.input_modules):
                 error('the default modules path cannot be read:', args.input_modules)
                 sys.exit(1)
-        context = loadModules(args.input_modules)
+        context = loadModules(args.input_modules, args.modules)
 
     if args.list:
         listPermissions(context)
