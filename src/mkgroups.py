@@ -24,7 +24,7 @@ def eprint(*args, **kwargs):
     Print to stderr.
     '''
     print(*args, file=sys.stderr, **kwargs)
-    
+
 #------------------------------------------------------------------------------
 
 def error(*args, **kwargs):
@@ -45,34 +45,35 @@ def warning(*args, **kwargs):
 
 class Server:
     '''
-    Abstract base of classes that encapsulate the connection to a server 
+    Abstract base of classes that encapsulate the connection to a server
     for the purposes of issuing permissions commands.
     '''
+
     def __init__(self, name, doChange):
         '''
         Base constructor. Do not instantiate Server directly.
-        
+
         Args:
-            name     - The server name in the mark2 tabs, or the empty string 
-                       for the default.        
+            name     - The server name in the mark2 tabs, or the empty string
+                       for the default.
             doChange - If True, command is sent to mark2; otherwise the command
                        is simply logged to stdout.
             plugin   - The name of the permissions plugin.
         '''
         self.name = name
         self.doChange = doChange
-        
+
     #--------------------------------------------------------------------------
 
     @staticmethod
     def withPermissionsPlugin(plugin, name, doChange):
         '''
         Construct a new Server with the specified permissions plugin.
-        
+
         Args:
             plugin   - The name of the permissions plugin.
-            name     - The server name in the mark2 tabs, or the empty string 
-                       for the default.        
+            name     - The server name in the mark2 tabs, or the empty string
+                       for the default.
             doChange - If True, command is sent to mark2; otherwise the command
                        is simply logged to stdout.
         '''
@@ -88,42 +89,42 @@ class Server:
 
     def send(self, *args):
         '''
-        Do a configuration action on the server by running a command with 
+        Do a configuration action on the server by running a command with
         mark2 send.
-        
+
         Args:
             *args - Array of strings containing the command. A single space is
-                    interposed between consecutive arguments. 
+                    interposed between consecutive arguments.
         '''
         command = 'mark2 send '
         if self.name:
             command += '-n ' + self.name + ' '
         command += ' '.join(args)
-    
+
         print(command)
         if self.doChange:
-            errorCode = os.system(command) 
+            errorCode = os.system(command)
             if errorCode != 0:
                 error('failed to send to mark2: ' + errorCode)
-            
+
     #--------------------------------------------------------------------------
-    
-    def createGroup(self, groupName, weight = None, world = None):
+
+    def createGroup(self, groupName, weight=None, world=None):
         '''
         Create a new permissions group by sending commands to the server.
-        
+
         Args:
             groupName - The name of the group.
-            weight    - The weight of the group (LuckPerms concept), or None 
+            weight    - The weight of the group (LuckPerms concept), or None
                         if not specified.
             world     - The name of the world that is the context of the
                         permission, or None to signify the default world.
         '''
         pass
-    
+
     #--------------------------------------------------------------------------
-    
-    def deleteGroup(self, groupName, world = None):
+
+    def deleteGroup(self, groupName, world=None):
         '''
         Delete a permissions group.
         Args:
@@ -132,13 +133,13 @@ class Server:
                         permission, or None to signify the default world.
         '''
         pass
-        
+
     #--------------------------------------------------------------------------
 
-    def groupClearPerms(self, groupName, world = None):
+    def groupClearPerms(self, groupName, world=None):
         '''
         Add the specified permission to the specified group.
-        
+
         Args:
             groupName - The name of the group.
             world     - The name of the world that is the context of the
@@ -147,11 +148,11 @@ class Server:
         pass
 
     #--------------------------------------------------------------------------
-    
-    def groupAddPerm(self, groupName, bpermission, world = None):
+
+    def groupAddPerm(self, groupName, bpermission, world=None):
         '''
         Add the specified permission to the specified group.
-        
+
         Args:
             groupName    - The name of the group.
             bpermissions - The permission name, using bPermissions-style syntax,
@@ -161,13 +162,13 @@ class Server:
                            permission, or None to signify the default world.
         '''
         pass
-        
+
     #--------------------------------------------------------------------------
-    
-    def groupAddParent(self, groupName, parentGroupName, world = None):
+
+    def groupAddParent(self, groupName, parentGroupName, world=None):
         '''
         Add the specified permission to the specified group.
-        
+
         Args:
             groupName    - The name of the group.
             bpermissions - The permission name, using bPermissions-style syntax,
@@ -177,9 +178,9 @@ class Server:
                            permission, or None to signify the default world.
         '''
         pass
-        
+
     #--------------------------------------------------------------------------
-    
+
     def savePerms(self):
         '''
         Save all permissions.
@@ -192,98 +193,100 @@ class bPermissionsServer(Server):
     '''
     Implementation of Server for bPermissions.
     '''
+
     def __init__(self, name, doChange):
         Server.__init__(self, name, doChange)
 
     #--------------------------------------------------------------------------
 
-    def createGroup(self, groupName, weight = None, world = None):
+    def createGroup(self, groupName, weight=None, world=None):
         self.send('group', groupName)
         # TOOD: world parameter
 
     #--------------------------------------------------------------------------
-    
-    def deleteGroup(self, groupName, world = None):
+
+    def deleteGroup(self, groupName, world=None):
         warning("deleting groups is not supported by bPermissions commands; you must clear groups.yml yourself!")
-        
+
     #--------------------------------------------------------------------------
 
-    def groupClearPerms(self, groupName, world = None):
+    def groupClearPerms(self, groupName, world=None):
         warning("clearing default group permissions is not implemented; review the resulting permissions!")
 
     #--------------------------------------------------------------------------
 
-    def groupAddPerm(self, groupName, bpermission, world = None):
+    def groupAddPerm(self, groupName, bpermission, world=None):
         if not world:
             world = 'world'
         self.send('exec g:' + groupName, 'a:addperm', 'v:' + bpermission, 'w:' + world)
 
     #--------------------------------------------------------------------------
-    
-    def groupAddParent(self, groupName, parentGroupName, world = None):
+
+    def groupAddParent(self, groupName, parentGroupName, world=None):
         if not world:
             world = 'world'
         self.send('exec g:' + groupName, 'a:addgroup', 'v:' + parentGroupName, 'w:' + world)
 
     #--------------------------------------------------------------------------
-    
+
     def savePerms(self):
         self.send('permissions save')
-    
+
 #------------------------------------------------------------------------------
 
 class LuckPermsServer(Server):
     '''
     Implementation of Server for LuckPerms.
     '''
+
     def __init__(self, name, doChange):
         Server.__init__(self, name, doChange)
-        
+
     #--------------------------------------------------------------------------
 
-    def createGroup(self, groupName, weight = None, world = None):
+    def createGroup(self, groupName, weight=None, world=None):
         self.send('lp creategroup', groupName)
         if weight:
             self.send('lp group', groupName, 'setweight', str(weight))
 
     #--------------------------------------------------------------------------
-    
-    def deleteGroup(self, groupName, world = None):
+
+    def deleteGroup(self, groupName, world=None):
         if world:
             self.send('lp deletegroup', groupName, 'world=' + world)
-        else: 
+        else:
             self.send('lp deletegroup', groupName)
 
     #--------------------------------------------------------------------------
 
-    def groupClearPerms(self, groupName, world = None):
+    def groupClearPerms(self, groupName, world=None):
         self.send('send lp group', groupName, 'clear')
 
     #--------------------------------------------------------------------------
 
-    def groupAddPerm(self, groupName, bpermission, world = None):
+    def groupAddPerm(self, groupName, bpermission, world=None):
         if bpermission.startswith('^'):
             permission = bpermission[1:]
             state = 'false'
         else:
             permission = bpermission
             state = 'true'
-            
+
         if world:
             self.send('lp group', groupName, 'permission set', permission, state, 'world=' + world)
         else:
             self.send('lp group', groupName, 'permission set', permission, state)
 
     #--------------------------------------------------------------------------
-    
-    def groupAddParent(self, groupName, parentGroupName, world = None):
+
+    def groupAddParent(self, groupName, parentGroupName, world=None):
         if world:
             self.send('lp group', groupName, 'parent add', parentGroupName, 'world=' + world)
         else:
             self.send('lp group', groupName, 'parent add', parentGroupName)
 
     #--------------------------------------------------------------------------
-    
+
     def savePerms(self):
         self.send('lp sync')
 
@@ -291,7 +294,7 @@ class LuckPermsServer(Server):
 
 def lowerArray(a):
     '''
-    Return a new array of all the elements of the input array converted to 
+    Return a new array of all the elements of the input array converted to
     lower case.
     '''
     return [x.lower() for x in a]
@@ -306,7 +309,7 @@ def mergePermissions(a, b):
     Args:
         a, b - Arrays. None is treated as the empty array.
     '''
-    aSet = Set(lowerArray(a or [])) 
+    aSet = Set(lowerArray(a or []))
     bSet = Set(lowerArray(b or []))
     return sorted(list(aSet | bSet))
 
@@ -334,16 +337,16 @@ def mergeDicts(a, b, mergeValues):
     Merges two dictionaries, non-destructively, combining
     values on duplicate keys as defined by the optional mergeValues ternary
     function.
-    
+
     Args:
         a, b        - Dictionaries to merge.
-        mergeValues - Ternary function of (key, a[key], b[key]) to merge the 
+        mergeValues - Ternary function of (key, a[key], b[key]) to merge the
                       values at key when it appears in both a and b.
     '''
     result = dict(a)
     for k, v in b.iteritems():
         if k in result:
-            result[k] = mergeValues(k, result[k], v) 
+            result[k] = mergeValues(k, result[k], v)
         else:
             result[k] = v
     return result
@@ -354,7 +357,7 @@ def mergeWeights(group, a, b):
     '''
     Handle merging of weights in modules as an error: weights should be
     specified once only.
-    
+
     Args:
         group - The group (dictionary key) for which the weights are specified.
     '''
@@ -408,21 +411,21 @@ def makeContext(groups, weights, permissions):
 
 def loadModules(moduleDirectory, moduleNames):
     '''
-    Load *.yml in the specified directory and return a dict describing the 
+    Load *.yml in the specified directory and return a dict describing the
     permissions ascribed to the corresponding context (world).
-    
+
     Args:
         moduleDirectory - The directory containing YAML permission modules.
         moduleNames - A list of names of module files to load in that directory,
                       possibly with file extensions omitted, and possibly the
                       empty list. The empty list signifies that ALL modules
                       in the directory should be loaded.
-    
+
     Returns:
         A dict describing a permission context with the following keys:
             * `groups` is a map from case sensitive group name to sorted array
-              of parent (inherited) group names in original case. All groups 
-              referenced in the context will have a key in the map, even 
+              of parent (inherited) group names in original case. All groups
+              referenced in the context will have a key in the map, even
               if they have no parents.
             * `weights` is a map from group name to weight (LuckPerms concept).
             * `permissions` is a map from case sensitive group name to sorted
@@ -446,7 +449,7 @@ def loadModules(moduleDirectory, moduleNames):
             baseName = name if name.endswith('.yml') else name + '.yml'
             moduleFileNames.append(moduleDirectory + '/' + baseName)
 
-    # Merge all module files.        
+    # Merge all module files.
     groups = {}
     weights = {}
     permissions = {}
@@ -480,10 +483,10 @@ def loadBPermissions(groupsFile):
     '''
     Load a bPermissions groups file and return it as a context dict, as per
     loadModules().
-    
+
     Args:
         groupsFile - The open file containing bPermissions groups.
-        
+
     Returns:
         A context dict.
     '''
@@ -607,7 +610,7 @@ def writeModuleFiles(context, outputDirectory):
     groupsModule['weights'] = groupsModuleWeights
     with open(outputDirectory + '/GROUPS.yml', 'w') as f:
         yaml.dump(groupsModule, f, default_flow_style=False)
-    
+
     # Group all permissions into modules based on the permission stem.
     for groupName in orderedGroups:
         for perm in permissions[groupName]:
@@ -646,38 +649,38 @@ def writeModuleFiles(context, outputDirectory):
 def updatePermissions(server, context, world):
     '''
     Update permissions.
-    
+
     Args:
         server  - The server to update.
         context - A dict containing 'groups', 'weights' and 'permissions' keys
-                  describing the permissions in specific world, or the default 
+                  describing the permissions in specific world, or the default
                   world/permission context.
-        world   - The name of the context world, or None for the default 
+        world   - The name of the context world, or None for the default
                   context.
     '''
     groups = context['groups']
     weights = context['weights']
     permissions = context['permissions']
     sortedGroupNames = sorted(groups.keys(), key=lambda v: v.upper())
-    
+
     # Note: default group is 'default' for bPermissions and LuckPerms.
     for group in sortedGroupNames:
         if group.lower() != 'default':
             weight = weights.get(group)
             server.createGroup(group, weight, world)
-            
+
     for group in sortedGroupNames:
         for parent in groups.get(group):
             # TODO: worlds.
-            server.groupAddParent(group, parent, world)    
-    
+            server.groupAddParent(group, parent, world)
+
     for group in sortedGroupNames:
         for perm in permissions.get(group, []):
             # TODO: worlds.
             server.groupAddPerm(group, perm, world)
-    
+
 #------------------------------------------------------------------------------
-        
+
 def deletePermissions(server, context, world):
     '''
     Delete all permissions.
@@ -685,9 +688,9 @@ def deletePermissions(server, context, world):
     Args:
         server  - The server to update.
         context - A dict containing 'groups', 'weights' and 'permissions' keys
-                  describing the permissions in specific world, or the default 
+                  describing the permissions in specific world, or the default
                   world/permission context.
-        world   - The name of the context world, or None for the default 
+        world   - The name of the context world, or None for the default
                   context.
     '''
     groups = context['groups']
@@ -729,8 +732,9 @@ class readable_dir(argparse.Action):
     Extend argparse to check for readable directory arguments, courtesy of
     StackOverflow.
     '''
+
     def __call__(self, parser, namespace, values, option_string=None):
-        prospective_dir=values
+        prospective_dir = values
         if not os.path.isdir(prospective_dir):
             raise argparse.ArgumentError(self, "readable_dir: {0} does not exist".format(prospective_dir))
         if os.access(prospective_dir, os.R_OK):
@@ -745,8 +749,9 @@ class writable_dir(argparse.Action):
     Extend argparse to check for writable directory arguments, courtesy of
     StackOverflow.
     '''
+
     def __call__(self, parser, namespace, values, option_string=None):
-        prospective_dir=values
+        prospective_dir = values
         if not os.path.isdir(prospective_dir):
             raise argparse.ArgumentError(self, "writable_dir: {0} does not exist".format(prospective_dir))
         if os.access(prospective_dir, os.W_OK):
@@ -758,10 +763,12 @@ class writable_dir(argparse.Action):
 # Set up PyYAML to write YAML keys in the order we add them.
 
 class UnsortableList(list):
+
     def sort(self, *args, **kwargs):
         pass
 
 class UnsortableOrderedDict(OrderedDict):
+
     def items(self, *args, **kwargs):
         return UnsortableList(OrderedDict.items(self, *args, **kwargs))
 
@@ -788,7 +795,7 @@ Examples:
     {0} --server pve23 -au --input-modules ~/permissions/pve
         Add permissions for the default world of server pve23, using YAML
         module files from the specified directory as input.
-        Commands for the default plugin (LuckPerms) are output to console 
+        Commands for the default plugin (LuckPerms) are output to console
         and sent to the server.
 
     {0} -b /ssd/creative/plugins/bPermissions/groups.yml -o creative/
@@ -801,7 +808,7 @@ Examples:
                         help='''The path to the directory containing YAML
                                 permission modules. If unspecified, a subdirectory
                                 of the CWD named after the server is tried.''')
-    parser.add_argument('-w', '--world', 
+    parser.add_argument('-w', '--world',
                         help='''The name of a specific world to configure; treated
                                 as the name of a subdirectory of the modules directory.
                                 Leave unset/empty string for the default worlds.
