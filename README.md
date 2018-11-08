@@ -183,9 +183,9 @@ Command Line Arguments
 
 ```
 $ bin/mkgroups --help
-usage: mkgroups.py [-h] [-s SERVER] [-m MODULES] [-w WORLD] [-b BPERMS_GROUPS]
-                   [-o OUTPUT_MODULES] [-p PLUGIN] [-d] [-a] [-u] [-l]
-                   [--debug]
+sage: mkgroups.py [-h] [-s SERVER] [-i INPUT_MODULES] [-w WORLD]
+                   [-b BPERMS_GROUPS] [-o OUTPUT_MODULES] [-p PLUGIN] [-d]
+                   [-a] [-u] [-l] [--debug]
 
 Configure permissions for a specified server using mark2 send commands.
 
@@ -197,7 +197,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -s SERVER, --server SERVER
                         The name of the server in the mark2 tabs.
-  -m MODULES, --modules MODULES
+  -i INPUT_MODULES, --input-modules INPUT_MODULES
                         The path to the directory containing YAML permission
                         modules. If unspecified, a subdirectory of the CWD
                         named after the server is tried.
@@ -208,9 +208,9 @@ optional arguments:
                         "all" to signify all worlds.
   -b BPERMS_GROUPS, --bperms-groups BPERMS_GROUPS
                         The path of a bPermissions groups.yml file to read
-                        instead of module files. Overrides --modules. Use this
-                        argument with -o to convert a bPermissions groups.yml
-                        file into Module Files.
+                        instead of module files. Overrides --input-modules.
+                        Use this argument with -o to convert a bPermissions
+                        groups.yml file into Module Files.
   -o OUTPUT_MODULES, --output-modules OUTPUT_MODULES
                         The path to a directory where YAML module files will
                         be output. The directory must exist. A module file
@@ -230,13 +230,13 @@ optional arguments:
   --debug               Enable debug logging.
 
 Examples:
-    /home/david/projects/python/mkgroups/src/mkgroups.py --world all --modules pve --plugin bPermissions --delete --add
+    /home/david/projects/python/mkgroups/src/mkgroups.py --world all --input-modules pve --plugin bPermissions --delete --add
         Generate bPermissions commands to delete and add all groups and their
         permissions, in all worlds, according to the YAML modules in the
         directory./pveall worlds specified in the directory pve/. The commands
         are NOT sent to a server.
 
-    /home/david/projects/python/mkgroups/src/mkgroups.py --server pve23 -au --modules ~/permissions/pve
+    /home/david/projects/python/mkgroups/src/mkgroups.py --server pve23 -au --input-modules ~/permissions/pve
         Add permissions for the default world of server pve23, using YAML
         module files from the specified directory as input.
         Commands for the default plugin (LuckPerms) are output to console 
@@ -245,6 +245,5 @@ Examples:
     /home/david/projects/python/mkgroups/src/mkgroups.py -b /ssd/creative/plugins/bPermissions/groups.yml -o creative/
         Load a bPermissions groups.yml file and write out the corresponding
         module files.
-
 ```
 

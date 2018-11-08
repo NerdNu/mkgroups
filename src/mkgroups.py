@@ -762,13 +762,13 @@ documentation.''',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog='''
 Examples:
-    {0} --world all --modules pve --plugin bPermissions --delete --add
+    {0} --world all --input-modules pve --plugin bPermissions --delete --add
         Generate bPermissions commands to delete and add all groups and their
         permissions, in all worlds, according to the YAML modules in the
         directory./pveall worlds specified in the directory pve/. The commands
         are NOT sent to a server.
 
-    {0} --server pve23 -au --modules ~/permissions/pve
+    {0} --server pve23 -au --input-modules ~/permissions/pve
         Add permissions for the default world of server pve23, using YAML
         module files from the specified directory as input.
         Commands for the default plugin (LuckPerms) are output to console 
@@ -780,7 +780,7 @@ Examples:
                                      '''.format(sys.argv[0]))
     parser.add_argument('-s', '--server',
                         help='The name of the server in the mark2 tabs.')
-    parser.add_argument('-m', '--modules', action=readable_dir, 
+    parser.add_argument('-i', '--input-modules', action=readable_dir,
                         help='''The path to the directory containing YAML
                                 permission modules. If unspecified, a subdirectory
                                 of the CWD named after the server is tried.''')
@@ -791,7 +791,7 @@ Examples:
                                 Use "all" to signify all worlds.''')
     parser.add_argument('-b', '--bperms-groups', type=argparse.FileType('r'),
                         help='''The path of a bPermissions groups.yml file to
-                                read instead of module files. Overrides --modules.
+                                read instead of module files. Overrides --input-modules.
                                 Use this argument with -o to convert a bPermissions
                                 groups.yml file into Module Files.''')
     parser.add_argument('-o', '--output-modules', action=writable_dir,
@@ -822,7 +822,7 @@ Examples:
     if DEBUG:
         print('# server:', args.server)
         print('# plugin:', args.plugin)
-        print('# modules:', args.modules)
+        print('# input_modules:', args.input_modules)
         print('# output_modules:', args.output_modules)
         print('# bPermissions:', args.bperms_groups.name if args.bperms_groups else None)
         print('# world:', (args.world or '<default world>'))
@@ -843,15 +843,15 @@ Examples:
     if args.bperms_groups:
         context = loadBPermissions(args.bperms_groups)
     else:
-        if not args.modules:
-            args.modules = args.server
-            if not args.modules:
+        if not args.input_modules:
+            args.input_modules = args.server
+            if not args.input_modules:
                 error('you need to specify a modules path or import from bPermissions')
                 sys.exit(1)
-            if not os.path.isdir(args.modules):
-                error('the default modules path cannot be read:', args.modules)
+            if not os.path.isdir(args.input_modules):
+                error('the default modules path cannot be read:', args.input_modules)
                 sys.exit(1)
-        context = loadModules(args.modules)
+        context = loadModules(args.input_modules)
 
     if args.list:
         listPermissions(context)
