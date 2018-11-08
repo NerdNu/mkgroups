@@ -8,6 +8,9 @@ plugin selected by a command line argument. Supported plugins currently include
 `LuckPerms` (the default) and `bPermissions` (not recommended and has limitations
 due to bugs and missing commands).
 
+`mkgroups` can also convert a bPermissions `groups.yml` file to the new input
+format.
+
 
 Concept of Operation
 --------------------
@@ -166,16 +169,29 @@ NOTE: currently, world-specific permissions are not implemented, but they will
 be very soon!
 
 
+bPermissions Import
+-------------------
+The `--bperms-groups` (`-b`) command line option can be used to import groups
+and permissions from an existing bPermissions `groups.yml` file. Those
+settings can then be written back out to disk using the `--output-modules`
+(`-o`) option. The use of these two options together constitutes a
+bPermissions import/conversion facility.
+
+
 Command Line Arguments
 ----------------------
 
 ```
-$ ./mkgroups --help
+$ bin/mkgroups --help
 usage: mkgroups.py [-h] [-s SERVER] [-m MODULES] [-w WORLD] [-b BPERMS_GROUPS]
                    [-o OUTPUT_MODULES] [-p PLUGIN] [-d] [-a] [-u] [-l]
                    [--debug]
 
 Configure permissions for a specified server using mark2 send commands.
+
+The command can also convert bPermissions groups.yml files to the new
+Module File format. See https://github.com/NerdNu/mkgroups for full
+documentation.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -192,7 +208,9 @@ optional arguments:
                         "all" to signify all worlds.
   -b BPERMS_GROUPS, --bperms-groups BPERMS_GROUPS
                         The path of a bPermissions groups.yml file to read
-                        instead of module files. Overrides --modules.
+                        instead of module files. Overrides --modules. Use this
+                        argument with -o to convert a bPermissions groups.yml
+                        file into Module Files.
   -o OUTPUT_MODULES, --output-modules OUTPUT_MODULES
                         The path to a directory where YAML module files will
                         be output. The directory must exist. A module file
@@ -227,5 +245,6 @@ Examples:
     /home/david/projects/python/mkgroups/src/mkgroups.py -b /ssd/creative/plugins/bPermissions/groups.yml -o creative/
         Load a bPermissions groups.yml file and write out the corresponding
         module files.
+
 ```
 

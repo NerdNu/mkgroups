@@ -753,7 +753,12 @@ class UnsortableOrderedDict(OrderedDict):
 if __name__ == '__main__':
     yaml.add_representer(UnsortableOrderedDict, yaml.representer.SafeRepresenter.represent_dict)
 
-    parser = argparse.ArgumentParser(description='Configure permissions for a specified server using mark2 send commands.',
+    parser = argparse.ArgumentParser(description='''
+Configure permissions for a specified server using mark2 send commands.
+
+The command can also convert bPermissions groups.yml files to the new
+Module File format. See https://github.com/NerdNu/mkgroups for full
+documentation.''',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog='''
 Examples:
@@ -786,7 +791,9 @@ Examples:
                                 Use "all" to signify all worlds.''')
     parser.add_argument('-b', '--bperms-groups', type=argparse.FileType('r'),
                         help='''The path of a bPermissions groups.yml file to
-                                read instead of module files. Overrides --modules.''')
+                                read instead of module files. Overrides --modules.
+                                Use this argument with -o to convert a bPermissions
+                                groups.yml file into Module Files.''')
     parser.add_argument('-o', '--output-modules', action=writable_dir,
                         help='''The path to a directory where YAML module files
                                 will be output. The directory must exist. A
@@ -821,7 +828,7 @@ Examples:
         print('# world:', (args.world or '<default world>'))
         print()
 
-    # If no args are given, treat as --help.
+    # If no args are given, show short usage.
     if len(sys.argv) == 1:
         parser.print_usage()
         sys.exit(0)
