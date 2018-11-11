@@ -165,9 +165,6 @@ only subdirectories that do not contain the period (`.`) in their name will be
 configured, so similarly, world configurations can be disabled by renaming the
 subdirectory to add a suffix.
 
-NOTE: currently, world-specific permissions are not implemented, but they will
-be very soon!
-
 
 bPermissions Import
 -------------------
@@ -182,6 +179,7 @@ Command Line Arguments
 ----------------------
 
 ```
+$ bin/mkgroups --help
 usage: mkgroups.py [-h] [-s SERVER] [-i INPUT_MODULES] [-w WORLD]
                    [-m MODULES [MODULES ...]] [-b BPERMS_GROUPS]
                    [-o OUTPUT_MODULES] [-p PLUGIN] [-d] [-a] [-u] [-l]
@@ -218,7 +216,9 @@ optional arguments:
                         permissions relating to the specified modules will be
                         issued. CAUTION: There is no analogously minimal way
                         to remove permissions. You need to remove all
-                        permissions and re-add them all from scratch.
+                        permissions and re-add them all from scratch. Caution
+                        is also advised when not working with the default
+                        context (e.g. world 'all').
   -b BPERMS_GROUPS, --bperms-groups BPERMS_GROUPS
                         The path of a bPermissions groups.yml file to read
                         instead of module files. Overrides --input-modules.
@@ -252,7 +252,7 @@ Examples:
     /home/david/projects/python/mkgroups/src/mkgroups.py --server pve23 -au --input-modules ~/permissions/pve
         Add permissions for the default world of server pve23, using YAML
         module files from the specified directory as input.
-        Commands for the default plugin (LuckPerms) are output to console 
+        Commands for the default plugin (LuckPerms) are output to console
         and sent to the server.
 
     /home/david/projects/python/mkgroups/src/mkgroups.py -b /ssd/creative/plugins/bPermissions/groups.yml -o creative/

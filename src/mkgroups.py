@@ -11,7 +11,6 @@ import glob
 import os.path
 import sys
 import yaml
-import path
 
 #------------------------------------------------------------------------------
 
@@ -40,6 +39,77 @@ def warning(*args, **kwargs):
     Print a warning message beginning with WARNING: to stderr.
     '''
     eprint(*(['WARNING:'] + list(args)), **kwargs)
+
+#------------------------------------------------------------------------------
+
+def lowerArray(a):
+    '''
+    Return a new array of all the elements of the input array converted to
+    lower case.
+    '''
+    return [x.lower() for x in a]
+
+#------------------------------------------------------------------------------
+
+def permissionsAsBooleanMap(perms, group):
+    '''
+    Convert a list of permissions in bPermissions syntax (caret '^' for
+    negation) to a map from permission node to True or False state.
+
+    Args:
+        perms - List of permissions in bPermissions syntax.
+        group  - The name of the group where the permissions are specified.
+                 This is only used to provide a more detailed error message in
+                 the situation where the group includes both a node and its
+                 negation.
+
+    Returns:
+        A map from lowercased node to True/False representing the permissions.
+    '''
+    result = {}
+    for bPermission in lowerArray(perms):
+        if bPermission.startswith('^'):
+            permission = bPermission[1:]
+            state = False
+        else:
+            permission = bPermission
+            state = True
+        if result.get(permission) == (not state):
+            error('group "' + group + '" includes both ' + permission + ' and ^' + permission)
+            sys.exit(1)
+        else:
+            result[permission] = state
+    return result
+
+#------------------------------------------------------------------------------
+
+def differencePermissions(before, after, group):
+    '''
+    Given two lists of permission nodes in bPermissions syntax, return a
+    minimal list of changes that must be made to turn the before permissions
+    into the after permissions.
+
+    Args:
+        before - The permissions before the changes.
+        after  - The permissions after the changes.
+        group  - The name of the group where the permissions are specified.
+                 This is only used to provide a more detailed error message in
+                 the situation where the group includes both a node and its
+                 negation.
+
+    Returns:
+        A sorted, list of lower cased changed permissions in bPermissions
+        format (using ^ to indicate a negated node).
+    '''
+    changes = []
+    beforeMap = permissionsAsBooleanMap(before, group)
+    afterMap = permissionsAsBooleanMap(after, group)
+    for node in set(beforeMap.keys()) | set(afterMap.keys()):
+        afterValue = afterMap.get(node)
+        # Treat absence of a value in afterMap as keeping the beforeMap value.
+        if afterValue is not None and afterValue != beforeMap.get(node):
+            changes.append(node if afterValue else '^' + node)
+    return sorted(changes)
 
 #------------------------------------------------------------------------------
 
@@ -105,11 +175,11 @@ class Server:
         if self.doChange:
             errorCode = os.system(command)
             if errorCode != 0:
-                error('failed to send to mark2: ' + errorCode)
+                error('failed to send to mark2: ' + str(errorCode))
 
     #--------------------------------------------------------------------------
 
-    def createGroup(self, groupName, world='default', weight=None):
+    def createGroup(self, groupName, world='default'):
         '''
         Create a new permissions group by sending commands to the server.
 
@@ -117,8 +187,21 @@ class Server:
             groupName - The name of the group.
             world     - The name of the world that is the context of the
                         permission, or 'default' to signify the default world.
+        '''
+        pass
+
+    #--------------------------------------------------------------------------
+
+    def setGroupWeight(self, groupName, weight, world='default'):
+        '''
+        Specify the weight of the group.
+
+        Args:
+            groupName - The name of the group.
             weight    - The weight of the group (LuckPerms concept), or None
                         if not specified.
+            world     - The name of the world that is the context of the
+                        permission, or 'default' to signify the default world.
         '''
         pass
 
@@ -187,19 +270,21 @@ class Server:
         '''
         pass
 
-#------------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
 
-    def updatePermissions(self, context, world):
+    def updatePermissions(self, contextMap, world):
         '''
         Update permissions.
 
         Args:
-            context - A dict containing 'groups', 'weights' and 'permissions' keys
-                      describing the permissions in specific world, or the default
-                      world/permission context.
-            world   - The name of the context world, or None for the default
-                      context.
+            contextMap - A map from context name to context, where a context is
+                         a dict containing 'groups', 'weights' and 'permissions'
+                         keys describing the permissions in specific world, or
+                         the default world/permission context.
+            world      - The name of the context world, or 'default' for the
+                         default context.
         '''
+        context = contextMap[world]
         groups = context['groups']
         weights = context['weights']
         permissions = context['permissions']
@@ -208,8 +293,9 @@ class Server:
         # Note: default group is 'default' for bPermissions and LuckPerms.
         for group in sortedGroupNames:
             if group.lower() != 'default':
-                weight = weights.get(group)
-                self.createGroup(group, world, weight)
+                self.createGroup(group, world)
+            weight = weights.get(group)
+            self.setGroupWeight(group, weight, world)
 
         for group in sortedGroupNames:
             for parent in groups.get(group):
@@ -219,19 +305,21 @@ class Server:
             for perm in permissions.get(group, []):
                 self.groupAddPerm(group, perm, world)
 
-#------------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
 
-    def deletePermissions(self, context, world):
+    def deletePermissions(self, contextMap, world):
         '''
         Delete all permissions.
 
         Args:
-            context - A dict containing 'groups', 'weights' and 'permissions' keys
-                      describing the permissions in specific world, or the default
-                      world/permission context.
-            world   - The name of the context world, or None for the default
-                      context.
+            contextMap - A map from context name to context, where a context is
+                         a dict containing 'groups', 'weights' and 'permissions'
+                         keys describing the permissions in specific world, or
+                         the default world/permission context.
+            world      - The name of the context world, or 'default' for the
+                         default context.
         '''
+        context = contextMap[world]
         groups = context['groups']
         sortedGroupNames = sorted(groups.keys(), key=lambda v: v.upper())
         for group in sortedGroupNames:
@@ -252,12 +340,18 @@ class bPermissionsServer(Server):
 
     #--------------------------------------------------------------------------
 
-    def createGroup(self, groupName, world, weight):
+    def createGroup(self, groupName, world):
         if world == 'default':
             self.send('group', groupName)
         else:
             # TODO: verify world parameter actually works.
             self.send('group', groupName, 'w:' + world)
+
+    #--------------------------------------------------------------------------
+
+    def setGroupWeight(self, groupName, weight, world):
+        # Weight is a LuckPerms concept.
+        pass
 
     #--------------------------------------------------------------------------
 
@@ -300,17 +394,22 @@ class LuckPermsServer(Server):
 
     #--------------------------------------------------------------------------
 
-    def createGroup(self, groupName, world, weight):
-        worldClause = '' if world == 'default' else ' world=' + world
-        self.send('lp creategroup ' + groupName + worldClause)
+    def createGroup(self, groupName, world):
+        # LuckPerms considers that groups exist in all worlds. Ignore world.
+        self.send('lp creategroup', groupName)
+
+    #--------------------------------------------------------------------------
+
+    def setGroupWeight(self, groupName, weight, world):
         if weight:
+            worldClause = '' if world == 'default' else ' world=' + world
             self.send('lp group ' + groupName + ' setweight ' + str(weight) + worldClause)
 
     #--------------------------------------------------------------------------
 
     def deleteGroup(self, groupName, world):
-        worldClause = '' if world == 'default' else ' world=' + world
-        self.send('lp deletegroup ' + groupName + worldClause)
+        # Group deletion ignores the world.
+        self.send('lp deletegroup', groupName)
 
     #--------------------------------------------------------------------------
 
@@ -342,14 +441,100 @@ class LuckPermsServer(Server):
     def savePerms(self):
         self.send('lp sync')
 
-#------------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
 
-def lowerArray(a):
-    '''
-    Return a new array of all the elements of the input array converted to
-    lower case.
-    '''
-    return [x.lower() for x in a]
+    def updatePermissions(self, contextMap, world):
+        '''
+        Override Server.updatePermissions() to minimise the resulting YAML file
+        when LuckPerms is configured for a YAML storage backend.
+
+        In LuckPerms, groups exist in all worlds, but have entries in the YAML
+        to override their properties (parents, weight, permission nodes) when
+        their properties are configured for a specific world. The format of the
+        YAML storage is much more compact and readable for the default context
+        than for the world-specific properties, and the world-specific entries
+        are added to the YAML when commands are issued to set properties for
+        a specific world, regardless of whether they differ from the default
+        context.
+
+        So, to minimise the size of the YAML file, we need to compare the
+        specific world to the default context and only set those properties
+        that are different.
+
+        '''
+        # The default context requires no minimisation.
+        if world == 'default':
+            Server.updatePermissions(self, contextMap, world)
+            return
+
+        # In a non-default context, apply the minimum set of differences
+        # between the world and the default context.
+        defaultContext = contextMap['default']
+        context = contextMap[world]
+        groups = context['groups']
+        weights = context['weights']
+        permissions = context['permissions']
+        sortedGroupNames = sorted(groups.keys(), key=lambda v: v.upper())
+
+        # Compute list of groups in world in excess of those in default context.
+        extraGroups = set(groups.keys()) - set(defaultContext['groups'].keys())
+        for group in sorted(extraGroups, key=lambda v: v.upper()):
+            if group.lower() != 'default':
+                self.createGroup(group, world)
+
+        # Where there are world-specific weight overrides, do those.
+        for group in sortedGroupNames:
+            weight = weights.get(group)
+            defaultWeight = defaultContext['weights'].get(group)
+            if weight is not None and weight != defaultWeight:
+                self.setGroupWeight(group, weight, world)
+
+        # Only issue parent commands if the parents differ in this world.
+        for group in sortedGroupNames:
+            defaultParents = defaultContext['groups'].get(group)
+            groupParents = groups.get(group)
+            if groupParents != defaultParents:
+                for parent in groupParents:
+                    self.groupAddParent(group, parent, world)
+
+        # For each group, compare the permissions in this world to the same
+        # group in the default world, and issue commands for just the changes.
+        for group in sortedGroupNames:
+            defaultPerms = defaultContext['permissions'].get(group, [])
+            groupPerms = permissions.get(group, [])
+            changedPerms = differencePermissions(defaultPerms, groupPerms, group)
+            for perm in changedPerms:
+                self.groupAddPerm(group, perm, world)
+
+    #--------------------------------------------------------------------------
+
+    def deletePermissions(self, contextMap, world):
+        '''
+        Delete all permissions in the specified world.
+
+        Args:
+            contextMap - A map from context name to context, where a context is
+                         a dict containing 'groups', 'weights' and 'permissions'
+                         keys describing the permissions in specific world, or
+                         the default world/permission context.
+            world      - The name of the context world, or 'default' for the
+                         default context.
+        '''
+        if world == 'default':
+            Server.deletePermissions(self, contextMap, world)
+            return
+
+        # For the non-default context, delete groups that are unique to the
+        # specified world and clear the ones shared with the default context.
+        defaultContext = contextMap['default']
+        context = contextMap[world]
+        defaultGroups = defaultContext['groups'].keys()
+        for group in sorted(defaultGroups, key=lambda v: v.upper()):
+            self.groupClearPerms(group, world)
+
+        worldSpecificGroups = set(context['groups'].keys()) - set(defaultGroups)
+        for group in sorted(worldSpecificGroups, key=lambda v: v.upper()):
+            self.deleteGroup(group, world)
 
 #------------------------------------------------------------------------------
 
@@ -542,6 +727,9 @@ def loadContextMap(contextName, moduleDirectory, moduleNames):
     of the moduleDirectory. The context name 'all' signifies that all contexts
     should be loaded ('default' and all world sub-directories).
 
+    To support minimisation of LuckPerms YAML storage, the default context is
+    always loaded in addition to any specific world that might be requested.
+
     Args:
         contextName     - The name of the context to load: either 'default',
                           'all', or a specific sub-directory of moduleDirectory
@@ -554,20 +742,19 @@ def loadContextMap(contextName, moduleDirectory, moduleNames):
                           that ALL modules in the directory should be loaded.
 
     Returns:
-        A dict mapping contextName(s) to contexts.
+        A dict mapping contextName(s) to contexts. It will always contain at
+        least the default context.
     '''
     contextMap = {}
+    contextMap['default'] = loadModules(moduleDirectory, moduleNames)
     if contextName == 'all':
-        contextMap['default'] = loadModules(moduleDirectory, moduleNames)
         for path in os.listdir(moduleDirectory):
             fullPath = os.path.join(moduleDirectory, path)
             if os.path.isdir(fullPath):
                 if DEBUG:
                     print('Loading world ' + fullPath)
                 contextMap[path] = loadModules(fullPath, moduleNames)
-    elif contextName == 'default':
-        contextMap['default'] = loadModules(moduleDirectory, moduleNames)
-    else:
+    elif contextName != 'default':
         contextDir = os.path.join(moduleDirectory, contextName)
         if os.path.isdir(contextDir):
             contextMap[contextName] = loadModules(contextDir, moduleNames)
@@ -866,7 +1053,9 @@ Examples:
                                 commands to add permissions relating to the specified
                                 modules will be issued. CAUTION: There is no analogously
                                 minimal way to remove permissions. You need to remove
-                                all permissions and re-add them all from scratch.''')
+                                all permissions and re-add them all from scratch.
+                                Caution is also advised when not working with the
+                                default context (e.g. world 'all').''')
     parser.add_argument('-b', '--bperms-groups', type=argparse.FileType('r'),
                         help='''The path of a bPermissions groups.yml file to
                                 read instead of module files. Overrides --input-modules.
@@ -946,14 +1135,18 @@ Examples:
 
     if args.delete:
         if args.world == 'all':
-            for world in sorted(contextMap.keys()):
-                server.deletePermissions(contextMap[world], world)
+            # Do 'default' context first.
+            server.deletePermissions(contextMap, 'default')
+            for world in sorted(set(contextMap.keys()) - set(['default'])):
+                server.deletePermissions(contextMap, world)
         else:
-            server.deletePermissions(contextMap[args.world], args.world)
+            server.deletePermissions(contextMap, args.world)
 
     if args.add:
         if args.world == 'all':
-            for world in sorted(contextMap.keys()):
-                server.updatePermissions(contextMap[world], world)
+            # Do 'default' context first.
+            server.updatePermissions(contextMap, 'default')
+            for world in sorted(set(contextMap.keys()) - set(['default'])):
+                server.updatePermissions(contextMap, world)
         else:
-            server.updatePermissions(contextMap[args.world], args.world)
+            server.updatePermissions(contextMap, args.world)
