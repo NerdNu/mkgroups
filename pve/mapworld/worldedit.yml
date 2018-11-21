@@ -1,0 +1,22 @@
+permissions:
+  default:
+  - worldedit.clipboard.clear
+  - worldedit.clipboard.copy
+  - worldedit.clipboard.flip
+  - worldedit.clipboard.paste
+  - worldedit.clipboard.rotate
+  - worldedit.history.redo
+  - worldedit.history.undo
+  - worldedit.region.move
+  - worldedit.region.replace
+  - worldedit.region.set
+  - worldedit.region.stack
+  - worldedit.selection.contract
+  - worldedit.selection.expand
+  - worldedit.selection.hpos
+  - worldedit.selection.inset
+  - worldedit.selection.outset
+  - worldedit.selection.pos
+  - worldedit.tool.replacer
+  - worldedit.wand
+
