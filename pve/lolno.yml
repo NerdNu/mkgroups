@@ -1,5 +1,5 @@
 permissions:
-  ModMode:
+  Moderators:
   - lolno.mod
 
   super:
