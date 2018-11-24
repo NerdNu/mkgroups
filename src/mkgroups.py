@@ -725,7 +725,8 @@ def loadContextMap(contextName, moduleDirectory, moduleNames):
     ('default' for the default world at the top level of the moduleDirectory)
     or a specific world whose permission modules are stored in a sub-directory
     of the moduleDirectory. The context name 'all' signifies that all contexts
-    should be loaded ('default' and all world sub-directories).
+    should be loaded ('default' and all world sub-directories). However, sub-
+    directories with a period in their name are ignored.
 
     To support minimisation of LuckPerms YAML storage, the default context is
     always loaded in addition to any specific world that might be requested.
@@ -747,19 +748,27 @@ def loadContextMap(contextName, moduleDirectory, moduleNames):
     '''
     contextMap = {}
     contextMap['default'] = loadModules(moduleDirectory, moduleNames)
+
+    if '.' in contextName:
+        error('"' + contextName + '" - the specified context name is disabled (contains a period).')
+        sys.exit(1)
+
     if contextName == 'all':
         for path in os.listdir(moduleDirectory):
-            fullPath = os.path.join(moduleDirectory, path)
-            if os.path.isdir(fullPath):
-                if DEBUG:
-                    print('Loading world ' + fullPath)
-                contextMap[path] = loadModules(fullPath, moduleNames)
+            if not '.' in path:
+                fullPath = os.path.join(moduleDirectory, path)
+                if os.path.isdir(fullPath):
+                    if DEBUG:
+                        print('Loading world ' + fullPath)
+                    contextMap[path] = loadModules(fullPath, moduleNames)
     elif contextName != 'default':
         contextDir = os.path.join(moduleDirectory, contextName)
         if os.path.isdir(contextDir):
             contextMap[contextName] = loadModules(contextDir, moduleNames)
         else:
             error('context "' + contextName + '" is not a sub-directory of module directory "' + moduleDirectory + '".')
+            sys.exit(1)
+
     return contextMap
 
 #------------------------------------------------------------------------------

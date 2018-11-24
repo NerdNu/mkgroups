@@ -159,11 +159,31 @@ directory that contains YAML modules. `mkgroups` only consults files in this
 directory that end in the suffix `.yml`, so modules can be disabled by changing
 the file suffix.
 
+
+World Specific Modules
+----------------------
 Subdirectories of the modules directory configure worlds with the same name as
 the subdirectory. When `mkgroups` is told to configure all worlds (`--world all`),
 only subdirectories that do not contain the period (`.`) in their name will be
 configured, so similarly, world configurations can be disabled by renaming the
 subdirectory to add a suffix.
+
+The permissions in module files for a specific world override or add to the
+permissions defined by the module files in the modules directory. That is to
+say, for a specific world, the module files only need to define the specific
+permissions that are *different* from those that apply to the default, global
+context.
+
+In the LuckPerms permission model, groups exist in all contexts (the "default"
+or "global" context as well as each world) but can have different permissions,
+weight and parent groups on a per-context (per-world) basis. `mkgroups` blesses
+this interpretation of groups as applying to all supported backends.
+
+The format of YAML storage of group permissions in LuckPerms is not compact or
+readable in the case of world-specific permissions, so `mkgroups` minimises the
+number of world-specific permission values stored by the LuckPerms YAML storage
+backend by taking into account the default values of all permissions in the
+default (global) context.
 
 
 bPermissions Import
