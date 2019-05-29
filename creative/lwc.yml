@@ -1,0 +1,9 @@
+permissions:
+  default:
+  - lwc.create.*
+  - lwc.protect
+  ModMode:
+  - lwc.mod
+  super:
+  - lwc.admin
+  - lwc.shownotices

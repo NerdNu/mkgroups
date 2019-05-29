@@ -1,0 +1,16 @@
+permissions:
+  default:
+  - plotme.limit.3
+  - plotme.use.add
+  - plotme.use.auto
+  - plotme.use.claim
+  - plotme.use.clear
+  - plotme.use.dispose
+  - plotme.use.home
+  - plotme.use.info
+  - plotme.use.remove
+  ModMode:
+  - plotme.admin.weanywhere
+  - plotme.buildanywhere
+  super:
+  - plotme.admin

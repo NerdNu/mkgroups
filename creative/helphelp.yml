@@ -1,0 +1,8 @@
+permissions:
+  super:
+  - helphelp.load
+  
+  TechAdmins:
+  - helphelp.dump
+  - helphelp.reload
+  

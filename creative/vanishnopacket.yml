@@ -1,0 +1,5 @@
+permissions:
+  Moderators:
+  - vanish.see
+  ModMode:
+  - vanish.vanish

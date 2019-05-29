@@ -1,0 +1,8 @@
+# Apparently defunct, relating to https://www.spigotmc.org/resources/worldeditregions.448/
+permissions:
+  default:
+  - wrg.notify.farewell
+  - wrg.notify.greeting
+  - wrg.worldguard
+  ModMode:
+  - wrg.bypass

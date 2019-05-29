@@ -1,0 +1,10 @@
+permissions:
+  ModMode:
+  # Allow vanished mods to hide hearts.
+  - lovedup.exempt
+  
+  super:
+  # Remove inherited permission; re-added in modmode.
+  - ^lovedup.exempt
+  - lovedup.hateall
+  - lovedup.loveall

@@ -1,0 +1,12 @@
+permissions:
+  default:
+  - barnyard.explode
+  - barnyard.list
+  - barnyard.name
+  - barnyard.remove
+  - barnyard.ride
+  - barnyard.spawn
+  - barnyard.stack
+  - barnyard.wear
+  super:
+  - barnyard.spawnany

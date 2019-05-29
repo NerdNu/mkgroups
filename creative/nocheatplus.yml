@@ -1,0 +1,15 @@
+permissions:
+  Moderators:
+  - nocheatplus.admin.chatlog
+  - nocheatplus.admin.notify
+  - nocheatplus.checks.chat.color
+  - nocheatplus.checks.chat.commands
+  - nocheatplus.checks.fight
+  - nocheatplus.checks.moving
+  - nocheatplus.checks.moving.runfly
+  super:
+  - nocheatplus.*
+  - nocheatplus.checks.chat.captcha
+  - nocheatplus.checks.chat.logins
+  - nocheatplus.checks.chat.relog
+  - nocheatplus.checks.chat.text

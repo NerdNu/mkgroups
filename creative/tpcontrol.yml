@@ -1,0 +1,25 @@
+permissions:
+  default:
+  - tpcontrol.back
+  - tpcontrol.level.user
+  - tpcontrol.randloc
+  - tpcontrol.warp.*
+
+  Moderators:
+  - tpcontrol.tppos
+
+  ModMode:
+  - tpcontrol.level.mod
+
+  super:
+  - tpcontrol.delwarp
+  - tpcontrol.level.admin
+  - tpcontrol.setwarp
+
+  HeadAdmins:
+  - tpcontrol.level.fakoo
+  
+  TechAdmins:
+  - tpcontrol.admin
+  - tpcontrol.level.fakoo
+  

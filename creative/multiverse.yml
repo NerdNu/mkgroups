@@ -1,0 +1,39 @@
+permissions:
+  default:
+  - multiverse.access.dungeons
+  - multiverse.access.lobby_contest
+  - multiverse.access.mapworld
+  - multiverse.access.minigames_maps
+  - multiverse.access.redstone
+  - multiverse.access.space
+  - multiverse.access.speedbuild_contest
+  - multiverse.access.testbuild
+  - multiverse.access.testbuild_june2017
+  - multiverse.access.weekly_build
+  - multiverse.access.world
+  - multiverse.access.world33
+  - multiverse.access.world_nether
+  - multiverse.access.world_space
+  - multiverse.access.world_the_end
+  - multiverse.core.list.worlds
+  - multiverse.core.spawn.self
+  super:
+  - multiverse.access.*
+  - multiverse.core.confirm
+  - multiverse.core.delete
+  - multiverse.core.gamerule.set
+  - multiverse.core.info
+  - multiverse.core.list.who
+  - multiverse.core.list.worlds
+  - multiverse.core.load
+  - multiverse.core.modify
+  - multiverse.core.modify.set
+  - multiverse.core.spawn.other
+  - multiverse.core.spawn.set
+  - multiverse.portal.*
+  - multiverse.teleport.*
+  - mv.bypass.gamemode.*
+  TechAdmins:
+  - multiverse.core.create
+  - multiverse.core.import
+  - multiverse.core.unload

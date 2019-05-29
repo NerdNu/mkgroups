@@ -1,0 +1,21 @@
+permissions:
+  default:
+  - awe.groups.default
+  - awe.user.jobs
+  - awe.user.messages.change
+  ModMode:
+  - awe.admin.purge
+  - awe.groups.modmode
+  super:
+  - awe.admin.cancel
+  - awe.admin.jobs
+  - awe.admin.jobs.all
+  - awe.admin.mode.change
+  - awe.admin.purge.all
+  - awe.admin.queue-bypass
+  - awe.groups.super
+  - awe.user.cancel
+  - awe.user.mode.change
+  - awe.user.purge
+  TechAdmins:
+  - awe.admin.reload

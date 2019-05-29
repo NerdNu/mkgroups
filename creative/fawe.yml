@@ -1,0 +1,5 @@
+permissions:
+  default:
+  - fawe.worldguard
+  ModMode:
+  - fawe.admin

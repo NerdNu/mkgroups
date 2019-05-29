@@ -1,0 +1,11 @@
+permissions:
+  default:
+  - safehorses.appearance
+  - safehorses.info
+  - safehorses.neigh
+  - safehorses.rename
+  - safehorses.spawn
+  Moderators:
+  - safehorses.*
+  super:
+  - safehorses.reload

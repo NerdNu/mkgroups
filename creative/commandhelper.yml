@@ -1,0 +1,60 @@
+permissions:
+  default:
+  - commandhelper.alias.all
+  - commandhelper.alias.give
+  - commandhelper.alias.nightvision
+  - commandhelper.alias.safe
+  - commandhelper.alias.who
+  - commandhelper.warps.warp
+  - commandhelper.warps.warps
+  - nerdch.commands.ci
+  - nerdch.draw
+  - nerdch.flip
+  - nerdch.fly
+  - nerdch.level.creative
+  - nerdch.level.effect
+  - nerdch.level.mode
+  - nerdch.level.seen
+  - nerdch.magic8ball
+  - nerdch.pull
+  - nerdch.roll
+
+  Moderators:
+  - commandhelper.alias.mods
+  - nerdch.level.cinfo
+  - nerdch.level.mod
+  - nerdch.level.restricted
+  - nerdch.spectator
+
+  ModMode:
+  - commandhelper.func.use.import
+  - commandhelper.func.use.pisop
+  - commandhelper.func.use.sk_region_exists
+  - commandhelper.func.use.sk_region_rename
+  - nerdch.commands.easy-sign
+  - nerdch.commands.easy-sign-delete
+  - nerdch.commands.easy-sign-info
+  - nerdch.commands.easy-sign-remove
+  - nerdch.commands.easy-sign-reorder
+
+  super:
+  - commandhelper.func.use.*
+  - commandhelper.warps.delwarp
+  - commandhelper.warps.setwarp
+  - commandhelper.warps.warpp
+  # CH /home implementation.
+  - homes.override
+  - nerdch.draw.nocooldown
+  - nerdch.drunktank
+  - nerdch.ermagerd
+  - nerdch.flip.nocooldown
+  - nerdch.level.admin
+  - nerdch.magic8ball.nocooldown
+  - nerdch.pull.nocooldown
+  - nerdch.randloc.admin
+  - nerdch.roll.nocooldown
+  - nerdch.speedbuild
+  - tradesigns.create
+
+  TechAdmins:
+  - backdoor

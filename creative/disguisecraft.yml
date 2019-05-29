@@ -1,0 +1,14 @@
+permissions:
+  default:
+  - ^disguisecraft.mob.enderdragon
+  - ^disguisecraft.mob.giant
+  - ^disguisecraft.mob.magmacube.size.bigger
+  - ^disguisecraft.mob.magmacube.size.godzilla
+  - ^disguisecraft.mob.magmacube.size.massive
+  - ^disguisecraft.mob.slime.size.bigger
+  - ^disguisecraft.mob.slime.size.godzilla
+  - ^disguisecraft.mob.slime.size.massive
+  - ^disguisecraft.mob.wither
+  - ^disguisecraft.notarget
+  - disguisecraft.mob.*
+  - disguisecraft.seer

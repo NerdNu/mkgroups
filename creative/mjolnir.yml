@@ -1,0 +1,7 @@
+permissions:
+  default:
+  - mjolnir.explode
+  Moderators:
+  - mjolnir.explodeplayer
+  super:
+  - mjolnir.*

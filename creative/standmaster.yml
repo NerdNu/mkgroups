@@ -1,0 +1,24 @@
+permissions:
+  default:
+  - standmaster.persist
+  - standmaster.preset.add
+  - standmaster.preset.load
+  - standmaster.preset.remove
+  - standmaster.stand.clear
+  - standmaster.stand.list
+  - standmaster.stand.name
+  - standmaster.stand.nobaseplate
+  - standmaster.stand.nogravity
+  - standmaster.stand.pose
+  - standmaster.stand.showarms
+  - standmaster.stand.small
+
+  super:
+  - standmaster.preset.addglobal
+  - standmaster.preset.removeglobal
+  - standmaster.removeinvisible
+  - standmaster.stand.invisible
+  
+TechAdmins:
+  - standmaster.reload
+

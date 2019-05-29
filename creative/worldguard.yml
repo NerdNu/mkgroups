@@ -1,0 +1,39 @@
+permissions:
+  default:
+  - worldguard.region.addmember.own.*
+  - worldguard.region.addowner.own.*
+  - worldguard.region.flag.flags.allow-drops.*
+  - worldguard.region.flag.flags.farewell.*
+  - worldguard.region.flag.flags.grass-growth.*
+  - worldguard.region.flag.flags.greeting.*
+  - worldguard.region.flag.flags.ice-form.*
+  - worldguard.region.flag.flags.ice-melt.*
+  - worldguard.region.flag.flags.item-drop.*
+  - worldguard.region.flag.flags.leaf-decay.*
+  - worldguard.region.flag.flags.mushroom-growth.*
+  - worldguard.region.flag.flags.mycelium-spread.*
+  - worldguard.region.flag.flags.snow-melt.*
+  - worldguard.region.flag.flags.time-lock.*
+  - worldguard.region.flag.flags.use-button.*
+  - worldguard.region.flag.flags.use-lever.*
+  - worldguard.region.flag.flags.use-pressure-plate.*
+  - worldguard.region.flag.flags.vine-growth.*
+  - worldguard.region.flag.flags.weather-lock.*
+  - worldguard.region.flag.flags.weather.*
+  - worldguard.region.flag.regions.own.*
+  - worldguard.region.info.*
+  - worldguard.region.info.member.*
+  - worldguard.region.info.own.*
+  - worldguard.region.list.own
+  - worldguard.region.removemember.own.*
+  - worldguard.region.select.*
+  - worldguard.region.teleport.own.*
+  - worldguard.region.wand
+  ModMode:
+  - worldguard.god
+  - worldguard.ignore.mod
+  - worldguard.notify
+  - worldguard.region.*
+  super:
+  - worldguard.*
+  - worldguard.*.

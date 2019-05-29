@@ -1,0 +1,9 @@
+permissions:
+  default:
+  - safebuckets.playerflow
+  
+  ModMode:
+  - safebuckets.flowsel
+  - safebuckets.tools.item
+  - safebuckets.tools.norefill
+  - safebuckets.tools.unsafe

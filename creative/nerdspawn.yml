@@ -1,0 +1,6 @@
+permissions:
+  default:
+  - nerdspawn.spawn
+  super:
+  - nerdspawn.setfirstspawn
+  - nerdspawn.setspawn

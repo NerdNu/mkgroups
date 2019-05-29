@@ -1,0 +1,33 @@
+permissions:
+  default:
+  - nerdplot.claim
+  - nerdplot.info
+  - nerdplot.tp
+  Moderators:
+  - nerdplot.listany
+  - nerdplot.removeowner
+  - nerdplot.setowner
+  super:
+  - nerdplot.clean
+  - nerdplot.create
+  - nerdplot.createarea
+  - nerdplot.infoany
+  - nerdplot.list
+  - nerdplot.max
+  - nerdplot.reload
+  - nerdplot.remove
+  - nerdplot.removearea
+  - nerdplot.setmax
+  - nerdplot.stats
+  - nerdplot.version
+  ForeignServerAdmins:
+  - nerdplot.clean
+  - nerdplot.create
+  - nerdplot.createarea
+  - nerdplot.list
+  - nerdplot.max
+  - nerdplot.reload
+  - nerdplot.remove
+  - nerdplot.removearea
+  - nerdplot.setmax
+  - nerdplot.version

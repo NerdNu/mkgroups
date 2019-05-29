@@ -1,0 +1,19 @@
+permissions:
+  Moderators:
+  - modmode.showmods
+  - modmode.toggle
+  - modmode.unvanish
+  - modmode.unvanish.unlimited
+  - modmode.vanish.list
+  - modmode.vanish.showmods
+
+  ModMode:
+  - modmode.vanish
+
+  super:
+  - modmode.admin
+  - modmode.fullvanish
+  - modmode.showvanished
+
+  TechAdmins:
+  - modmode.op

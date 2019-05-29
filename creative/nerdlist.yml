@@ -1,0 +1,29 @@
+permissions:
+  default:
+  - nerdlist.group.default
+  - nerdlist.list
+
+  Moderators:
+  - nerdlist.group.mods
+
+  ModMode:
+  - nerdlist.group.modmode
+
+  CAdmins:
+  - nerdlist.group.cadmins
+
+  HeadAdmins:
+  - nerdlist.group.headadmins
+
+  PAdmins:
+  - nerdlist.group.padmins
+
+  TechAdmins:
+  - nerdlist.group.techadmins
+  
+  super: 
+  - nerdlist.admin
+
+  ForeignServerAdmins:
+  - nerdlist.admin
+
