@@ -695,7 +695,7 @@ def loadModules(moduleDirectory, moduleNames):
             with open(fileName, 'r') as f:
                 if DEBUG:
                     print('Loading', fileName)
-                module = yaml.load(f)
+                module = yaml.load(f, Loader=yaml.FullLoader)
                 if module:
                     # Warn about unexpected keys - could be typos.
                     unexpectedKeys = set(module.keys()) - set(['groups', 'weights', 'permissions'])
@@ -787,7 +787,7 @@ def loadBPermissions(groupsFile):
     groups = {}
     permissions = {}
 
-    bPermissions = yaml.load(groupsFile)
+    bPermissions = yaml.load(groupsFile, Loader=yaml.FullLoader)
     if bPermissions and 'groups' in bPermissions:
         bPermsGroups = bPermissions['groups']
         for name, group in bPermsGroups.iteritems():
