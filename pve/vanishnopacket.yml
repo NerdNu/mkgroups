@@ -1,5 +1,15 @@
 permissions:
+  default:
+  # Imported mid PvE 23: presumed hack for LuckPerms race condition:
+  - ^vanish.see
+
+  Moderators:
+  - ^vanish.see
+
   ModMode:
   - vanish.see
   - vanish.vanish
-  
+
+  super:
+  - vanish.see
+

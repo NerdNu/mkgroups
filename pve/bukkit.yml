@@ -16,13 +16,18 @@ permissions:
   - bukkit.command.whitelist.list
   - bukkit.command.whitelist.remove
   - minecraft.command.gamemode
+  - minecraft.command.give
   - minecraft.command.kill
   - minecraft.command.setblock
   - minecraft.command.summon
+  - minecraft.command.title
   - minecraft.command.weather
   - minecraft.command.whitelist
   - minecraft.command.worldborder
 
   TechAdmins:
   - bukkit.command.timings
-  
+  - minecraft.command.data
+  - minecraft.command.datapack
+  - minecraft.command.execute
+

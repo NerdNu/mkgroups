@@ -4,6 +4,14 @@ permissions:
   
   ModMode:
   - safebuckets.flowsel
+  - safebuckets.safesel
   - safebuckets.tools.item
   - safebuckets.tools.norefill
   - safebuckets.tools.unsafe
+
+  super:
+  - safebuckets.safesel
+  
+  TechAdmins:
+  - safebuckets.reload
+

@@ -1,4 +1,3 @@
-# TODO: review all these permissions.
 permissions:
   Moderators:
   - modmode.toggle
@@ -15,3 +14,7 @@ permissions:
   - modmode.admin
   - modmode.fullvanish
   - modmode.showvanished
+
+  TechAdmins:
+  - modmode.*
+

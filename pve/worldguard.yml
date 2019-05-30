@@ -13,8 +13,6 @@ permissions:
   - worldguard.notify
   
   ModMode:
-  - worldguard.god
-  - worldguard.ignore.mod
   - worldguard.region.*
 
   super:

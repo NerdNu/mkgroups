@@ -1,0 +1,7 @@
+permissions:
+  default:
+  - wecui.command.toggle
+
+  ModMode:
+  - wecui.command.toggle
+

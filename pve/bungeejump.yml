@@ -1,0 +1,27 @@
+permissions:
+  Moderators:
+  - bungeejump.mcbouncer.*
+  - bungeejump.mcbouncer.addnote
+  - bungeejump.mcbouncer.ban
+  - bungeejump.mcbouncer.delnote
+  - bungeejump.mcbouncer.kick
+  - bungeejump.mcbouncer.lookup
+  - bungeejump.mcbouncer.removenote
+  - bungeejump.mcbouncer.unban
+
+  super:
+  - bungeejump.admin
+  # Imported mid PvE 23: LuckPerms race condition hack?
+  - bungeejump.mcbouncer.*
+  - bungeejump.mcbouncer.addnote
+  - bungeejump.mcbouncer.ban
+  - bungeejump.mcbouncer.delnote
+  - bungeejump.mcbouncer.kick
+  - bungeejump.mcbouncer.lookup
+  - bungeejump.mcbouncer.removenote
+  - bungeejump.mcbouncer.unban
+
+  PAdmins:
+  # Imported mid PvE 23: LuckPerms race condition hack?
+  - bungeejump.mcbouncer.*
+

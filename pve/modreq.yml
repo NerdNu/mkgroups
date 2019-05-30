@@ -1,10 +1,20 @@
 permissions:
+  default:
+  # Imported mid PvE 23: presumed hack for LuckPerms race conditions:
+  - ^modreq.teleport
+
   Moderators:
   - ^modreq.teleport
+  - ^modreq.cleardb
+  - ^modreq.upgrade
+  - modreq.check
+  - modreq.claim
+  - modreq.done
   - modreq.mod
+  - modreq.notice
+  - modreq.request
 
   ModMode:
-  # TODO: review.
   - modreq.check
   - modreq.claim
   - modreq.done

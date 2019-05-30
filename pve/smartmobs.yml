@@ -1,0 +1,7 @@
+permissions:
+  super:
+  - smartmobs.admin
+
+  TechAdmins:
+  - smartmobs.admin
+
