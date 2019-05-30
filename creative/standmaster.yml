@@ -19,6 +19,6 @@ permissions:
   - standmaster.removeinvisible
   - standmaster.stand.invisible
   
-TechAdmins:
+  TechAdmins:
   - standmaster.reload
 
