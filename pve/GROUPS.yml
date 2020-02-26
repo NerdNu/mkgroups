@@ -29,8 +29,10 @@ groups:
 # precedence from inheritance.
 weights:
   # Ensure that ModMode takes precendence over Moderators for negated perms.
+  # ModMode needs to have a higher weight than ForeignServerAdmins for reasons
+  # described in the ModMode README.md.
   Moderators: 1
-  ModMode: 2
+  ModMode: 20
   AdminChat: 3
   
   CAdmins: 10
