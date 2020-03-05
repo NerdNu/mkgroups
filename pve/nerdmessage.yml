@@ -14,6 +14,7 @@ permissions:
   - nerdmessage.ignore.alert
   - nerdmessage.ignore.bypass-msg
   - nerdmessage.mb
+  - nerdmessage.mbmotd
   - nerdmessage.o
 
   super:
